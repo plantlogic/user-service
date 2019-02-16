@@ -1,0 +1,21 @@
+version: '3.7'
+services:
+  app:
+    build: ./
+    restart: always
+    depends_on:
+      - database
+    networks:
+      database:
+  database:
+    image: 'mongo:4'
+    restart: always
+    networks:
+      database:
+        aliases:
+        - database
+    volumes:
+      - ./mongodb:/bitnami
+
+networks:
+  database:

@@ -1,2 +1,3 @@
-# user-service
-🌱
+# 🌱 PlantLogic | User Service
+
+
