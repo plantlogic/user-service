@@ -1,23 +1,23 @@
 version: '3.7'
 services:
-  app:
+  userservice:
     build: ./
     restart: always
     depends_on:
-      - database
+      - userdb
     networks:
-      database:
+      usernet:
     ports:
       - 127.0.0.1:8080:8080
-  database:
+  userdb:
     image: 'mongo:4'
     restart: always
     networks:
-      database:
+      usernet:
         aliases:
-        - database
+        - userdb
     volumes:
       - ./mongodb:/data/db
 
 networks:
-  database:
+  usernet:
