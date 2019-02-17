@@ -10,7 +10,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-public class PLErrorController implements ErrorController {
+public class ErrorPage implements ErrorController {
     private static final String PATH = "/error";
 
     @RequestMapping("/error")

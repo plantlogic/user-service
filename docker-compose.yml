@@ -7,6 +7,8 @@ services:
       - database
     networks:
       database:
+    ports:
+      - 127.0.0.1:8080:8080
   database:
     image: 'mongo:4'
     restart: always
@@ -15,7 +17,7 @@ services:
         aliases:
         - database
     volumes:
-      - ./mongodb:/bitnami
+      - ./mongodb:/data/db
 
 networks:
   database:

@@ -30,9 +30,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.requiresChannel().anyRequest().requiresSecure();
+        //TODO: HTTPS at this level?
+        // http.requiresChannel().anyRequest().requiresSecure();
 
-        http.authorizeRequests().antMatchers("/signin").permitAll().anyRequest().authenticated();
+//        http.authorizeRequests().antMatchers("/signin").permitAll().anyRequest().authenticated();
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
@@ -69,17 +70,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        // Allow swagger to be accessed without authentication
-        web.ignoring().antMatchers("/v2/api-docs")//
-              .antMatchers("/swagger-resources/**")//
-              .antMatchers("/swagger-ui.html")//
-              .antMatchers("/configuration/**")//
-              .antMatchers("/webjars/**")//
-              .antMatchers("/public")
-
-              // Un-secure H2 Database (for testing purposes, H2 console shouldn't be unprotected in production)
-              .and()
-              .ignoring()
-              .antMatchers("/h2-console/**/**");;
+        web.ignoring().antMatchers("/v2/api-docs")
+            .antMatchers("/swagger-resources/**")
+            .antMatchers("/swagger-ui.html")
+            .antMatchers("/configuration/**")
+            .antMatchers("/webjars/**")
+            .antMatchers("/public")
+            .and()
+            .ignoring()
+            .antMatchers("/signin")
+            .antMatchers("/allUsers");
     }
 }

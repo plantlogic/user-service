@@ -2,6 +2,7 @@ package edu.csumb.spring19.capstone.services;
 
 import javax.servlet.http.HttpServletRequest;
 
+import edu.csumb.spring19.capstone.models.PLUser;
 import edu.csumb.spring19.capstone.repositories.UserRepository;
 import edu.csumb.spring19.capstone.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +34,9 @@ public class UserInterface {
         } catch (AuthenticationException e) {
             throw new Exception("Username or password was incorrect.");
         }
+    }
+
+    public Iterable<PLUser> allUsers() {
+        return userRepository.findAll();
     }
 }
