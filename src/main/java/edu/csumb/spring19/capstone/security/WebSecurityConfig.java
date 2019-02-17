@@ -78,7 +78,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/public")
             .and()
             .ignoring()
-            .antMatchers("/signin")
-            .antMatchers("/allUsers");
+            .antMatchers("/signin");
     }
 }

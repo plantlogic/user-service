@@ -18,8 +18,8 @@ public class UserController {
         return new RestData<String>(userService.signin(username, password));
     }
 
-    @GetMapping("/allUsers")
-    public RestDTO allUsers() {
+    @GetMapping("/userList")
+    public RestDTO userList() {
         return new RestData<Iterable<PLUser>>(userService.allUsers());
     }
 }

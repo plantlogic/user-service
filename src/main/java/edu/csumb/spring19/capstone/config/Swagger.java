@@ -24,7 +24,7 @@ public class Swagger {
               .paths(PathSelectors.any())
               .build()
               .securitySchemes(new ArrayList<>(Arrays.asList(
-                    new ApiKey("Bearer %token", "Authorization", "Header")
+                    new ApiKey("Bearer Token", "Authorization", "Header")
               )));
     }
 }
