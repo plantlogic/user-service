@@ -2,6 +2,9 @@ package edu.csumb.spring19.capstone.services;
 
 import javax.servlet.http.HttpServletRequest;
 
+import edu.csumb.spring19.capstone.dto.RestDTO;
+import edu.csumb.spring19.capstone.dto.RestData;
+import edu.csumb.spring19.capstone.dto.RestFailure;
 import edu.csumb.spring19.capstone.models.PLUser;
 import edu.csumb.spring19.capstone.repositories.UserRepository;
 import edu.csumb.spring19.capstone.security.JwtTokenProvider;
@@ -27,12 +30,12 @@ public class UserInterface {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public String signin(String username, String password) throws Exception {
+    public RestDTO signin(String username, String password) throws Throwable {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-            return jwtTokenProvider.createToken(username, userRepository.findById(username).get().getPermissions());
+            return new RestData<>(jwtTokenProvider.createToken(username, userRepository.findById(username).get().getPermissions()));
         } catch (AuthenticationException e) {
-            throw new Exception("Username or password was incorrect.");
+            return new RestFailure("Username or password was incorrect.");
         }
     }
 

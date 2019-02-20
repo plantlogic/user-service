@@ -17,14 +17,14 @@ public class UserController {
 
     @ApiOperation(value = "Sign in and issue a token for the user.")
     @GetMapping("/signin")
-    public RestDTO signin(@RequestParam String username, @RequestParam String password) throws Exception {
-        return new RestData<>(userService.signin(username, password));
+    public RestDTO signin(@RequestParam String username, @RequestParam String password) throws Throwable {
+        return userService.signin(username, password);
     }
 
     @ApiOperation(value = "List all user accounts.",
           authorizations = {@Authorization(value = "Bearer")})
     @GetMapping("/userlist")
     public RestDTO userList() {
-        return new RestData<Iterable<PLUser>>(userService.allUsers());
+        return new RestData<>(userService.allUsers());
     }
 }
