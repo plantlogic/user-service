@@ -18,7 +18,7 @@ public class UserController {
         return new RestData<>(userService.signin(username, password));
     }
 
-    @GetMapping("/userList")
+    @GetMapping("/userlist")
     public RestDTO userList() {
         return new RestData<Iterable<PLUser>>(userService.allUsers());
     }

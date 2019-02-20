@@ -20,11 +20,11 @@ public class Swagger {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
               .select()
-              .apis(RequestHandlerSelectors.any())
+              .apis(RequestHandlerSelectors.basePackage("edu.csumb.spring19.capstone"))
               .paths(PathSelectors.any())
               .build()
               .securitySchemes(new ArrayList<>(Arrays.asList(
-                    new ApiKey("Bearer Token", "Authorization", "Header")
+                    new ApiKey("bearer %", "Authorization", "Header")
               )));
     }
 }
