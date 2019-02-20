@@ -13,9 +13,9 @@ public class UserController {
     @Autowired
     private UserInterface userService;
 
-    @PostMapping("/signin")
-    public RestDTO login(@RequestParam String username, @RequestParam String password) throws Exception {
-        return new RestData<String>(userService.signin(username, password));
+    @GetMapping("/signin")
+    public RestDTO signin(@RequestParam String username, @RequestParam String password) throws Exception {
+        return new RestData<>(userService.signin(username, password));
     }
 
     @GetMapping("/userList")

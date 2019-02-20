@@ -28,12 +28,12 @@ public class UserInterface {
     private AuthenticationManager authenticationManager;
 
     public String signin(String username, String password) throws Exception {
-        try {
+        //try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
             return jwtTokenProvider.createToken(username, userRepository.findById(username).get().getPermissions());
-        } catch (AuthenticationException e) {
+        /*} catch (AuthenticationException e) {
             throw new Exception("Username or password was incorrect.");
-        }
+        }*/
     }
 
     public Iterable<PLUser> allUsers() {

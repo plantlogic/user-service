@@ -42,6 +42,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
     }
 
+    /*// TODO: Code needed?
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(authenticationProvider());
+    }
+
+    // TODO: Code needed?
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userRepository);
+        authProvider.setPasswordEncoder(encoder());
+        return authProvider;
+    } */
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
