@@ -33,28 +33,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         //TODO: HTTPS at this level?
         // http.requiresChannel().anyRequest().requiresSecure();
 
-//        http.authorizeRequests().antMatchers("/signin").permitAll().anyRequest().authenticated();
+        http.authorizeRequests().antMatchers("/signin").permitAll().anyRequest().authenticated();
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         //TODO: http.exceptionHandling().accessDeniedPage("/login");
 
         http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
-    }
-
-    // TODO: Code needed?
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(authenticationProvider());
-    }
-
-    // TODO: Code needed?
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userRepository);
-        authProvider.setPasswordEncoder(encoder());
-        return authProvider;
     }
 
     @Bean
@@ -68,6 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder(12);
     }
 
+    // Allow access to Swagger without auth
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/v2/api-docs")
@@ -75,9 +61,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/swagger-ui.html")
             .antMatchers("/configuration/**")
             .antMatchers("/webjars/**")
-            .antMatchers("/public")
-            .and()
-            .ignoring()
-            .antMatchers("/signin");
+            .antMatchers("/public");
     }
 }
