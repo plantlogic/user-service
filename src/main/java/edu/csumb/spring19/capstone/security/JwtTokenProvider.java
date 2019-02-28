@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import edu.csumb.spring19.capstone.dto.auth.TokenDTO;
 import edu.csumb.spring19.capstone.models.PLRole;
 import edu.csumb.spring19.capstone.services.PLUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,19 +33,19 @@ public class JwtTokenProvider {
 
     public Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    public String createToken(String username, List<SimpleGrantedAuthority> roles) {
+    public TokenDTO createToken(String username, List<SimpleGrantedAuthority> roles) {
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("auth", roles);
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
-        return Jwts.builder()
+        return new TokenDTO(validity, Jwts.builder()
               .setClaims(claims)
               .setIssuedAt(now)
               .setExpiration(validity)
               .signWith(secretKey)
-              .compact();
+              .compact());
     }
 
     public Authentication getAuthentication(String token) {
