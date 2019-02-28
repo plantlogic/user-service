@@ -1,6 +1,5 @@
 package edu.csumb.spring19.capstone.dto.auth;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class TokenDTO {

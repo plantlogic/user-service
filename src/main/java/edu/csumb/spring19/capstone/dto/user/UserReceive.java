@@ -1,7 +1,7 @@
 package edu.csumb.spring19.capstone.dto.user;
 
 public class UserReceive extends UserDTO {
-    String password;
+    private String password;
 
     public String getPassword() {
         return password;

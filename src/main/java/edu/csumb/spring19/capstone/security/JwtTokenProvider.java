@@ -3,13 +3,10 @@ package edu.csumb.spring19.capstone.security;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import edu.csumb.spring19.capstone.dto.auth.TokenDTO;
-import edu.csumb.spring19.capstone.models.PLRole;
 import edu.csumb.spring19.capstone.services.PLUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
