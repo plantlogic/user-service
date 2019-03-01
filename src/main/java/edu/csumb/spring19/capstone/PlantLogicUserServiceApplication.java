@@ -25,7 +25,7 @@ public class PlantLogicUserServiceApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... params) throws Exception {
-	    if (userService.size() < 1)
-            userService.addUser("admin", passwordEncoder.encode("admin"), "Default User", "hello@plantlogic.org");
+		if (userService.size() < 1)
+			userService.addUser("admin", passwordEncoder.encode("admin"), "Default User", "hello@plantlogic.org");
 	}
 }

@@ -43,6 +43,14 @@ public class PLUser {
         return this.password;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
     public List<SimpleGrantedAuthority> getPermissions() {
         return this.permissions;
     }
