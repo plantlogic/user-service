@@ -1,18 +1,21 @@
 package edu.csumb.spring19.capstone.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 @Document(collection = "users")
 public class PLUser {
-
     @Id
     @Size(min = 4, message = "Usernames must be at least 4 characters.")
     private String username;
@@ -22,36 +25,50 @@ public class PLUser {
     private String email;
     @NotEmpty
     private String realName;
+    private Calendar passwordUpdated;
     private ArrayList<SimpleGrantedAuthority> permissions = new ArrayList<>();
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public PLUser(String username, String password, String realName, String email){
         this.username = username;
         this.password = password;
         this.realName = realName;
         this.email = email;
+        this.passwordUpdated = Calendar.getInstance();
     }
 
     public String getUsername() {
-        return username;
+        return this.username;
     }
 
-    public void changePassword(String password){
-        this.password = password;
-    }
-
+    @JsonIgnore
     public String getPassword(){
         return this.password;
     }
 
     public String getEmail() {
-        return email;
+        return this.email;
     }
 
     public String getRealName() {
-        return realName;
+        return this.realName;
+    }
+
+    public Calendar getPasswordUpdated() {
+        return this.passwordUpdated;
     }
 
     public List<SimpleGrantedAuthority> getPermissions() {
         return this.permissions;
+    }
+
+
+    public void changePassword(String oldPassword, String newPassword) throws Exception {
+        if (passwordEncoder.matches(oldPassword, this.password)) {
+            this.password = newPassword;
+            this.passwordUpdated = Calendar.getInstance();
+        } else throw new Exception("Password incorrect");
     }
 }
