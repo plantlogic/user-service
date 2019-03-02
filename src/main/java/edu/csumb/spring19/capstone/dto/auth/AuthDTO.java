@@ -1,14 +1,16 @@
 package edu.csumb.spring19.capstone.dto.auth;
 
-public class AuthDTO extends TokenDTO {
-    public String name;
+import edu.csumb.spring19.capstone.dto.user.UserInfoSend;
 
-    public AuthDTO(TokenDTO input, String name) {
+public class AuthDTO extends TokenDTO {
+    public UserInfoSend user;
+
+    public AuthDTO(TokenDTO input, UserInfoSend user) {
         super(input.getExpiration(), input.getToken());
-        this.name = name;
+        this.user = user;
     }
 
-    public String getName() {
-        return name;
+    public UserInfoSend getUser() {
+        return user;
     }
 }

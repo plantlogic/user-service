@@ -1,36 +1,34 @@
 package edu.csumb.spring19.capstone.security;
 
-import java.security.Key;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import edu.csumb.spring19.capstone.dto.auth.TokenDTO;
-import edu.csumb.spring19.capstone.services.PLUserDetails;
+import edu.csumb.spring19.capstone.services.UserInterface;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.SignatureAlgorithm;
+import javax.servlet.http.HttpServletRequest;
+import java.security.Key;
+import java.util.Collection;
+import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
     private long validityInMilliseconds = 1 * 60 * 60 * 1000; // 1h
-
     @Autowired
-    public PLUserDetails userRepository;
+    public UserInterface userRepository;
 
     public Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    public TokenDTO createToken(String username, List<SimpleGrantedAuthority> roles) {
+    public TokenDTO createToken(String username, Collection<? extends GrantedAuthority> roles) {
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("auth", roles);
 
