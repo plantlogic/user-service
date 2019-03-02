@@ -17,6 +17,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserInterface {
     @Autowired
@@ -47,5 +49,9 @@ public class UserInterface {
 
     public Iterable<PLUser> allUsers() {
         return userRepository.findAll();
+    }
+
+    public Optional<PLUser> getUser(String username) {
+        return userRepository.findById(username);
     }
 }

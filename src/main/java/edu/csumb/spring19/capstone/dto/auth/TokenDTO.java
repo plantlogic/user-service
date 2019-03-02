@@ -7,7 +7,6 @@ public class TokenDTO {
     public String token;
 
     public TokenDTO(Date expiration, String token) {
-        // Javascript date format
         this.expiration = expiration;
         this.token = token;
     }
