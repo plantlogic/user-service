@@ -2,15 +2,13 @@ package edu.csumb.spring19.capstone.controllers;
 
 import edu.csumb.spring19.capstone.dto.RestDTO;
 import edu.csumb.spring19.capstone.dto.RestData;
-import edu.csumb.spring19.capstone.dto.RestFailure;
-import edu.csumb.spring19.capstone.models.PLUser;
+import edu.csumb.spring19.capstone.dto.user.UserDTO;
+import edu.csumb.spring19.capstone.dto.user.UserInfoReceive;
 import edu.csumb.spring19.capstone.services.UserInterface;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/management")
@@ -26,10 +24,24 @@ public class UserController {
         return new RestData<>(userService.allUsers());
     }
 
-    @GetMapping("/getUser")
-    public RestDTO getUser(@RequestParam String username) {
-        Optional<PLUser> user = userService.getUser(username);
-        if (user.isPresent()) return new RestData<>(user.get());
-        else return new RestFailure("User does not exist.");
+    @ApiOperation(value = "Get the information for a specific user account.",
+          authorizations = {@Authorization(value = "Bearer")})
+    @PostMapping("/getUser")
+    public RestDTO getUser(@RequestBody UserDTO user) {
+        return userService.getUser(user.getUsername());
+    }
+
+    @ApiOperation(value = "Add user account.",
+          authorizations = {@Authorization(value = "Bearer")})
+    @PostMapping("/addUser")
+    public RestDTO addUser(@RequestBody UserInfoReceive user) {
+        return userService.addUser(user);
+    }
+
+    @ApiOperation(value = "Delete user account.",
+          authorizations = {@Authorization(value = "Bearer")})
+    @PostMapping("/deleteUser")
+    public RestDTO deleteUser(@RequestBody UserDTO user) {
+        return userService.deleteUser(user.getUsername());
     }
 }
