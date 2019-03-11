@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.Email;
@@ -26,17 +26,18 @@ public class PLUser {
     @NotEmpty
     private String realName;
     private Calendar passwordUpdated;
-    private ArrayList<SimpleGrantedAuthority> permissions = new ArrayList<>();
+    private ArrayList<GrantedAuthority> permissions;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public PLUser(String username, String password, String realName, String email){
+    public PLUser(String username, String password, String realName, String email, ArrayList<GrantedAuthority> permissions){
         this.username = username;
         this.password = password;
         this.realName = realName;
         this.email = email;
         this.passwordUpdated = Calendar.getInstance();
+        this.permissions = permissions;
     }
 
     public String getUsername() {
@@ -60,7 +61,7 @@ public class PLUser {
         return this.passwordUpdated;
     }
 
-    public List<SimpleGrantedAuthority> getPermissions() {
+    public List<GrantedAuthority> getPermissions() {
         return this.permissions;
     }
 

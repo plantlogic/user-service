@@ -4,7 +4,6 @@ import edu.csumb.spring19.capstone.dto.RestDTO;
 import edu.csumb.spring19.capstone.dto.RestData;
 import edu.csumb.spring19.capstone.dto.RestFailure;
 import edu.csumb.spring19.capstone.dto.auth.AuthDTO;
-import edu.csumb.spring19.capstone.repositories.UserRepository;
 import edu.csumb.spring19.capstone.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,7 +40,8 @@ public class AuthInterface {
                   )
             );
         } catch (Exception e) {
-            return new RestFailure("Username or password was incorrect.");
+            //return new RestFailure("Username or password was incorrect.");
+            return new RestFailure(e.getMessage());
         }
     }
 }

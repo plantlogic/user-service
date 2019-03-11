@@ -6,9 +6,11 @@ import edu.csumb.spring19.capstone.dto.RestFailure;
 import edu.csumb.spring19.capstone.dto.RestSuccess;
 import edu.csumb.spring19.capstone.dto.user.UserInfoReceive;
 import edu.csumb.spring19.capstone.dto.user.UserInfoSend;
+import edu.csumb.spring19.capstone.models.PLRole;
 import edu.csumb.spring19.capstone.models.PLUser;
 import edu.csumb.spring19.capstone.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,6 +18,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Service
@@ -88,7 +92,8 @@ public class UserInterface implements UserDetailsService {
 
         try {
             String pass = generatePassword();
-            userRepository.save(new PLUser(user.getUsername(), passwordEncoder.encode(pass), user.getRealName(), user.getEmail()));
+            userRepository.save(new PLUser(user.getUsername(), passwordEncoder.encode(pass), user.getRealName(), user.getEmail(),
+                  new ArrayList<GrantedAuthority>()));
             return new RestData<>(pass);
         } catch (Exception e) {
             return new RestFailure(e.getMessage());
@@ -106,7 +111,11 @@ public class UserInterface implements UserDetailsService {
                         "admin",
                         passwordEncoder.encode("admin"),
                         "Default Admin",
-                        "hello@plantlogic.org"
+                        "hello@plantlogic.org",
+                        new ArrayList<GrantedAuthority>(Arrays.asList(
+                              PLRole.DATA_VIEW, PLRole.DATA_EDIT, PLRole.DATA_ENTRY,
+                              PLRole.USER_MANAGEMENT, PLRole.APP_ADMIN
+                        ))
                   )
             );
         }
