@@ -1,7 +1,7 @@
-package edu.csumb.spring19.capstone.config;
+package edu.csumb.spring19.capstone.config.mongo;
 
 import com.mongodb.MongoClient;
-import edu.csumb.spring19.capstone.config.mongoConverters.StringToGrantedAuthorityConverter;
+import edu.csumb.spring19.capstone.config.mongo.converters.StringToGrantedAuthorityConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;

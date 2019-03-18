@@ -1,4 +1,4 @@
-package edu.csumb.spring19.capstone.config.mongoConverters;
+package edu.csumb.spring19.capstone.config.mongo.converters;
 
 import edu.csumb.spring19.capstone.models.PLRole;
 import org.springframework.core.convert.converter.Converter;
