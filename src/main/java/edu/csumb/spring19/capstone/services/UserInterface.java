@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
@@ -139,6 +138,11 @@ public class UserInterface implements UserDetailsService {
         return pass;
     }
 
+    /**
+     * Converts a list of string permissions into a list of granted authorities using our PLRole
+     * @param in List of strings matching PLRole enum
+     * @return List of granted authorities implemented by PLRole enum
+     */
     private List<GrantedAuthority> parsePermissions(List<String> in) {
         return in.stream().map(PLRole::valueOf).collect(Collectors.toList());
     }

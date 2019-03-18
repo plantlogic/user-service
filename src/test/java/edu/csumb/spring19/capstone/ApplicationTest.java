@@ -28,6 +28,8 @@ public class ApplicationTest {
                   "spring.data.mongodb.port=" + mongo.getMappedPort(port)
             );
             values.applyTo(configurableApplicationContext);
+
+
         }
     }
 

@@ -2,6 +2,7 @@ package edu.csumb.spring19.capstone.config;
 
 import com.mongodb.MongoClient;
 import edu.csumb.spring19.capstone.config.mongoConverters.StringToGrantedAuthorityConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
@@ -12,8 +13,12 @@ import java.util.List;
 
 @Configuration
 public class Mongo extends AbstractMongoConfiguration {
-    private final String host = "userdb", database = "userdb";
-    private final Integer port = 27017;
+    @Value("${spring.data.mongodb.host:userdb}")
+    private String host;
+    @Value("${spring.data.mongodb.database:userdb}")
+    private String database;
+    @Value("${spring.data.mongodb.port:27017}")
+    private Integer port;
     private final List<Converter<?, ?>> converters = new ArrayList<>();
 
     @Override
