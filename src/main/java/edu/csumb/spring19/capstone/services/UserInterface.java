@@ -20,7 +20,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Service
 public class UserInterface implements UserDetailsService {
@@ -93,7 +96,7 @@ public class UserInterface implements UserDetailsService {
         try {
             String pass = generatePassword();
             userRepository.save(new PLUser(user.getUsername(), passwordEncoder.encode(pass), user.getRealName(), user.getEmail(),
-                  new ArrayList<GrantedAuthority>()));
+                  parsePermissions(user.getPermissions())));
             return new RestData<>(pass);
         } catch (Exception e) {
             return new RestFailure(e.getMessage());
@@ -134,6 +137,10 @@ public class UserInterface implements UserDetailsService {
             pass = pass + String.valueOf(alph[(new Long(Math.round(Math.random()*alph.length))).intValue()]);
         }
         return pass;
+    }
+
+    private List<GrantedAuthority> parsePermissions(List<String> in) {
+        return in.stream().map(PLRole::valueOf).collect(Collectors.toList());
     }
 
     @Override

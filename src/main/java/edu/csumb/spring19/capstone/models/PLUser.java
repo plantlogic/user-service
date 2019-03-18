@@ -10,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -26,12 +25,12 @@ public class PLUser {
     @NotEmpty
     private String realName;
     private Calendar passwordUpdated;
-    private ArrayList<GrantedAuthority> permissions;
+    private List<GrantedAuthority> permissions;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public PLUser(String username, String password, String realName, String email, ArrayList<GrantedAuthority> permissions){
+    public PLUser(String username, String password, String realName, String email, List<GrantedAuthority> permissions){
         this.username = username;
         this.password = password;
         this.realName = realName;
