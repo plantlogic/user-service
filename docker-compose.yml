@@ -3,6 +3,10 @@ services:
   userservice:
     build: ./
     restart: always
+    environment:
+      - APP_NAME=PlantLogic
+    env_file:
+      - ./smtp-config.env
     depends_on:
       - userdb
     networks:

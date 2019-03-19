@@ -25,12 +25,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class UserInterface implements UserDetailsService {
+public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private MailService mailService;
 
     /**
      * Gets data on all users from mongoDB
@@ -96,7 +99,8 @@ public class UserInterface implements UserDetailsService {
             String pass = generatePassword();
             userRepository.save(new PLUser(user.getUsername(), passwordEncoder.encode(pass), user.getRealName(), user.getEmail(),
                   parsePermissions(user.getPermissions())));
-            return new RestData<>(pass);
+            mailService.newAccountCreated(user.getEmail(), user.getRealName(), user.getUsername(), pass);
+            return new RestSuccess();
         } catch (Exception e) {
             return new RestFailure(e.getMessage());
         }

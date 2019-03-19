@@ -11,7 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthInterface {
+public class AuthService {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
@@ -19,7 +19,7 @@ public class AuthInterface {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private UserInterface userRepository;
+    private UserService userRepository;
 
     /**
      * Authenticate a user with the specified username and password
