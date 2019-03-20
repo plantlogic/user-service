@@ -16,7 +16,7 @@ public class AuthController {
     private AuthService authService;
 
     @ApiOperation(value = "Sign in and issue a token for the user.")
-    @PostMapping("/signin")
+    @PostMapping("/signIn")
     public RestDTO signIn(@RequestBody UserPass user) {
         return authService.signIn(user.getUsername(), user.getPassword());
     }

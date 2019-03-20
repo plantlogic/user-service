@@ -5,6 +5,7 @@ import edu.csumb.spring19.capstone.dto.RestData;
 import edu.csumb.spring19.capstone.dto.RestFailure;
 import edu.csumb.spring19.capstone.dto.RestSuccess;
 import edu.csumb.spring19.capstone.dto.user.UserInfoReceive;
+import edu.csumb.spring19.capstone.dto.user.UserInfoReceiveEdit;
 import edu.csumb.spring19.capstone.dto.user.UserInfoSend;
 import edu.csumb.spring19.capstone.helpers.PasswordGenerator;
 import edu.csumb.spring19.capstone.models.PLRole;
@@ -70,6 +71,32 @@ public class UserService implements UserDetailsService {
             return new RestFailure("You can't delete the current user.");
         } else if (user.isPresent()) {
             userRepository.deleteByUsername(username);
+            return new RestSuccess();
+        } else {
+            return new RestFailure("No user found with that username.");
+        }
+    }
+
+    public RestDTO editUser(UserInfoReceiveEdit editedUser) {
+        if (editedUser.usernameChanged() && userRepository.existsByUsername(editedUser.getUsername())) {
+            return new RestFailure("That username already exists.");
+        }
+
+        List<GrantedAuthority> parsedPermissions = parsePermissions(editedUser.getPermissions());
+        if (!parsedPermissions.contains(PLRole.USER_MANAGEMENT)) {
+            return new RestFailure("Admins with 'User Management' permission " +
+                  "cannot remove their own 'User Management' permissions.");
+        }
+
+        Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(editedUser.getInitialUsername());
+        if (user.isPresent()) {
+            user.get().importEdits(
+                  editedUser.getUsername(),
+                  editedUser.getEmail(),
+                  editedUser.getRealName(),
+                  parsedPermissions
+                  );
+            userRepository.save(user.get());
             return new RestSuccess();
         } else {
             return new RestFailure("No user found with that username.");

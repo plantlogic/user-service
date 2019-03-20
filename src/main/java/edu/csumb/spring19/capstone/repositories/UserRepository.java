@@ -12,5 +12,7 @@ public interface UserRepository extends CrudRepository<PLUser, String> {
 
     void deleteByUsername(String username);
 
+    int countByPermissionsContains(String perm);
+
     boolean existsByUsername(String username);
 }

@@ -4,6 +4,7 @@ import edu.csumb.spring19.capstone.dto.RestDTO;
 import edu.csumb.spring19.capstone.dto.RestData;
 import edu.csumb.spring19.capstone.dto.user.UserDTO;
 import edu.csumb.spring19.capstone.dto.user.UserInfoReceive;
+import edu.csumb.spring19.capstone.dto.user.UserInfoReceiveEdit;
 import edu.csumb.spring19.capstone.services.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
@@ -21,7 +22,7 @@ public class UserController {
 
     @ApiOperation(value = "List all user accounts.",
           authorizations = {@Authorization(value = "Bearer")})
-    @GetMapping("/userlist")
+    @GetMapping("/userList")
     public RestDTO userList() {
         return new RestData<>(userService.allUsers());
     }
@@ -52,5 +53,12 @@ public class UserController {
     @PostMapping("/resetPassword")
     public RestDTO resetPassword(@RequestBody UserDTO user) {
         return userService.resetPassword(user.getUsername());
+    }
+
+    @ApiOperation(value = "Overwrites values in a user's info.",
+          authorizations = {@Authorization(value = "Bearer")})
+    @PostMapping("/editUser")
+    public RestDTO editUser(@RequestBody UserInfoReceiveEdit user) {
+        return userService.editUser(user);
     }
 }
