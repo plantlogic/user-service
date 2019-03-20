@@ -6,6 +6,7 @@ import edu.csumb.spring19.capstone.dto.RestFailure;
 import edu.csumb.spring19.capstone.dto.RestSuccess;
 import edu.csumb.spring19.capstone.dto.user.UserInfoReceive;
 import edu.csumb.spring19.capstone.dto.user.UserInfoSend;
+import edu.csumb.spring19.capstone.helpers.PasswordGenerator;
 import edu.csumb.spring19.capstone.models.PLRole;
 import edu.csumb.spring19.capstone.models.PLUser;
 import edu.csumb.spring19.capstone.repositories.UserRepository;
@@ -57,13 +58,9 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public Optional<UserInfoSend> getUserDTO(String username){
+    Optional<UserInfoSend> getUserDTO(String username){
         Optional<PLUser> user = userRepository.findById(username);
-        if (user.isPresent()) {
-            return Optional.of(new UserInfoSend(user.get()));
-        } else {
-            return Optional.empty();
-        }
+        return user.map(UserInfoSend::new);
     }
 
     /**
@@ -74,12 +71,7 @@ public class UserService implements UserDetailsService {
     public RestDTO deleteUser(String username) {
         Optional<PLUser> user = userRepository.findById(username);
         if (user.isPresent()) {
-            try {
-                userRepository.deleteById(username);
-            } catch (Exception e) {
-                return new RestFailure(e.getMessage());
-            }
-
+            userRepository.deleteById(username);
             return new RestSuccess();
         } else {
             return new RestFailure("No user found with that username.");
@@ -93,13 +85,30 @@ public class UserService implements UserDetailsService {
      */
     public RestDTO addUser(UserInfoReceive user) {
         if (user.anyEmptyVal()) return new RestFailure("All fields must be filled.");
-        if (userRepository.existsById(user.getUsername())) return new RestFailure("User already exists.");
+        if (userRepository.existsById(user.getUsername())) return new RestFailure("That user already exists. Please change username.");
 
-        String pass = generatePassword();
+        String pass = PasswordGenerator.newPass();
         userRepository.save(new PLUser(user.getUsername(), passwordEncoder.encode(pass), user.getRealName(), user.getEmail(),
               parsePermissions(user.getPermissions()), true));
         mailService.newAccountCreated(user.getEmail(), user.getRealName(), user.getUsername(), pass);
         return new RestSuccess();
+    }
+
+    /**
+     * Generates a random password for the user and emails it to them, forcing them to change their password on next log in
+     */
+    public RestDTO resetPassword(String username) {
+        Optional<PLUser> user = userRepository.findById(username);
+        if (user.isPresent()) {
+            String pass = PasswordGenerator.newPass();
+            user.get().changePassword(pass);
+            user.get().resetPassword();
+            userRepository.save(user.get());
+            mailService.passwordReset(user.get().getEmail(), user.get().getRealName(), pass);
+            return new RestSuccess();
+        } else {
+            return new RestFailure("No user found with that username.");
+        }
     }
 
 
@@ -122,21 +131,6 @@ public class UserService implements UserDetailsService {
                   )
             );
         }
-    }
-
-    /**
-     * Generates a 20-character alphanumeric string for a password - will be trashed when password reset
-     * links are implemented
-     * @return 20 character alphanumeric string for random password
-     */
-    // TODO: Temporary alternative to emailing a password reset link
-    private String generatePassword() {
-        char[] alph = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
-        StringBuilder pass = new StringBuilder();
-        for (int i = 0; i < 20; i++) {
-            pass.append(alph[(int) (Math.random() * alph.length)]);
-        }
-        return pass.toString();
     }
 
     /**

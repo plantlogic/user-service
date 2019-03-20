@@ -5,6 +5,7 @@ import edu.csumb.spring19.capstone.dto.RestData;
 import edu.csumb.spring19.capstone.dto.RestFailure;
 import edu.csumb.spring19.capstone.dto.RestSuccess;
 import edu.csumb.spring19.capstone.dto.auth.AuthDTO;
+import edu.csumb.spring19.capstone.helpers.PasswordGenerator;
 import edu.csumb.spring19.capstone.models.PLUser;
 import edu.csumb.spring19.capstone.repositories.UserRepository;
 import edu.csumb.spring19.capstone.security.JwtTokenProvider;
@@ -29,6 +30,8 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private MailService mailService;
 
     public RestDTO signin(String username, String password) {
         try {
@@ -47,11 +50,17 @@ public class AuthService {
         }
     }
 
-    public RestDTO resetPassword(String username) throws Exception {
+    public RestDTO resetPassword(String username) {
         Optional<PLUser> user = userRepository.findById(username);
-        if (!user.isPresent()) throw new Exception("User does not exist.");
-        user.get().resetPassword();
-        userRepository.save(user.get());
-        return new RestSuccess();
+        if (user.isPresent()) {
+            String pass = PasswordGenerator.newPass();
+            user.get().changePassword(pass);
+            user.get().resetPassword();
+            userRepository.save(user.get());
+            mailService.passwordReset(user.get().getEmail(), user.get().getRealName(), pass);
+            return new RestSuccess();
+        } else {
+            return new RestFailure("No user found with that username.");
+        }
     }
 }

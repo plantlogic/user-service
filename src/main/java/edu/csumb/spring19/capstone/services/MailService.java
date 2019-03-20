@@ -31,9 +31,32 @@ public class MailService {
         sendMail(to, "New " + appConfig.getAppName() + " Account",
 
               "Hi " + name + ",\n\n" +
+
+
                     "An administrator has created you a " + appConfig.getAppName() + " account.\n\n" +
+
+
                     "Your username is: " + username + "\n" +
                     "Your temporary password is: " + token + "\n\n" +
+
+
+                    "Best,\n" +
+                    appConfig.getAppName() + " Team"
+
+        );
+    }
+
+    public void passwordReset(String to, String name, String token) {
+        sendMail(to,appConfig.getAppName() + " Password Reset",
+
+              "Hi " + name + ",\n\n" +
+
+
+                    "You are receiving this email because your " + appConfig.getAppName() + " password has been reset.\n\n" +
+
+                    "Your temporary password is: " + token + "\n\n" +
+
+
                     "Best,\n" +
                     appConfig.getAppName() + " Team"
 

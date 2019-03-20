@@ -2,7 +2,6 @@ version: '3.7'
 services:
   userservice:
     build: ./
-    restart: always
     environment:
       - APP_NAME=PlantLogic
     env_file:

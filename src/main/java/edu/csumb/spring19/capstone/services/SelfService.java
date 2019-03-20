@@ -3,6 +3,7 @@ package edu.csumb.spring19.capstone.services;
 import edu.csumb.spring19.capstone.dto.RestDTO;
 import edu.csumb.spring19.capstone.dto.RestFailure;
 import edu.csumb.spring19.capstone.dto.RestSuccess;
+import edu.csumb.spring19.capstone.helpers.PasswordGenerator;
 import edu.csumb.spring19.capstone.models.PLUser;
 import edu.csumb.spring19.capstone.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ public class SelfService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
 
     public RestDTO changePassword(String oldPassword, String newPassword) throws Exception {
         PLUser user = getCurrentUser();
