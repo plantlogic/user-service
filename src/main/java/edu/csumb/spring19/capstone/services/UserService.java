@@ -58,7 +58,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    Optional<UserInfoSend> getUserDTO(String username){
+    public Optional<UserInfoSend> getUserDTO(String username){
         Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(username);
         return user.map(UserInfoSend::new);
     }
