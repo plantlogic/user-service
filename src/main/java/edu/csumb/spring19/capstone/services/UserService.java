@@ -59,7 +59,7 @@ public class UserService implements UserDetailsService {
     }
 
     Optional<UserInfoSend> getUserDTO(String username){
-        Optional<PLUser> user = userRepository.findById(username);
+        Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(username);
         return user.map(UserInfoSend::new);
     }
 
@@ -69,9 +69,9 @@ public class UserService implements UserDetailsService {
      * @return UserInfoSend type with success/failure
      */
     public RestDTO deleteUser(String username) {
-        Optional<PLUser> user = userRepository.findById(username);
+        Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(username);
         if (user.isPresent()) {
-            userRepository.deleteById(username);
+            userRepository.deleteByUsername(username);
             return new RestSuccess();
         } else {
             return new RestFailure("No user found with that username.");
@@ -85,7 +85,7 @@ public class UserService implements UserDetailsService {
      */
     public RestDTO addUser(UserInfoReceive user) {
         if (user.anyEmptyVal()) return new RestFailure("All fields must be filled.");
-        if (userRepository.existsById(user.getUsername())) return new RestFailure("That user already exists. Please change username.");
+        if (userRepository.existsByUsername(user.getUsername())) return new RestFailure("That user already exists. Please change username.");
 
         String pass = PasswordGenerator.newPass();
         userRepository.save(new PLUser(user.getUsername(), passwordEncoder.encode(pass), user.getRealName(), user.getEmail(),
@@ -98,10 +98,10 @@ public class UserService implements UserDetailsService {
      * Generates a random password for the user and emails it to them, forcing them to change their password on next log in
      */
     public RestDTO resetPassword(String username) {
-        Optional<PLUser> user = userRepository.findById(username);
+        Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(username);
         if (user.isPresent()) {
             String pass = PasswordGenerator.newPass();
-            user.get().changePassword(pass);
+            user.get().changePassword(passwordEncoder.encode(pass));
             user.get().resetPassword();
             userRepository.save(user.get());
             mailService.passwordReset(user.get().getEmail(), user.get().getRealName(), pass);
@@ -144,7 +144,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<PLUser> user = userRepository.findById(username);
+        Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(username);
         if(!user.isPresent()) {
             throw new UsernameNotFoundException("User not found.");
         }

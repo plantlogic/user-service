@@ -2,13 +2,15 @@ package edu.csumb.spring19.capstone.repositories;
 
 import edu.csumb.spring19.capstone.models.PLUser;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+@Repository
 public interface UserRepository extends CrudRepository<PLUser, String> {
-    @Override
-    Optional<PLUser> findById(String username);
+    Optional<PLUser> findByUsernameIgnoreCase(String username);
 
-    @Override
-    void delete(PLUser toDelete);
+    void deleteByUsername(String username);
+
+    boolean existsByUsername(String username);
 }

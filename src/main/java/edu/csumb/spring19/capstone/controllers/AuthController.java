@@ -21,7 +21,7 @@ public class AuthController {
         return authService.signin(user.getUsername(), user.getPassword());
     }
 
-    @ApiOperation(value = "Resets user's password - emails them a random temporary password and forces them to change it on login..")
+    @ApiOperation(value = "Resets user's password - emails them a random temporary password and forces them to change it on login.")
     @PostMapping("/resetPassword")
     public RestDTO resetPassword(@RequestBody UserDTO user) {
         return authService.resetPassword(user.getUsername());
