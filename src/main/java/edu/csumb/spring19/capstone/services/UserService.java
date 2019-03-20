@@ -12,6 +12,7 @@ import edu.csumb.spring19.capstone.models.PLUser;
 import edu.csumb.spring19.capstone.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -58,11 +59,6 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public Optional<UserInfoSend> getUserDTO(String username){
-        Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(username);
-        return user.map(UserInfoSend::new);
-    }
-
     /**
      * Deletes user with the specified username
      * @param username The username to look for
@@ -70,7 +66,9 @@ public class UserService implements UserDetailsService {
      */
     public RestDTO deleteUser(String username) {
         Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(username);
-        if (user.isPresent()) {
+        if (getCurrentUsername().equals(username)) {
+            return new RestFailure("You can't delete the current user.");
+        } else if (user.isPresent()) {
             userRepository.deleteByUsername(username);
             return new RestSuccess();
         } else {
@@ -97,6 +95,7 @@ public class UserService implements UserDetailsService {
     /**
      * Generates a random password for the user and emails it to them, forcing them to change their password on next log in
      */
+    @SuppressWarnings("Duplicates")
     public RestDTO resetPassword(String username) {
         Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(username);
         if (user.isPresent()) {
@@ -110,6 +109,16 @@ public class UserService implements UserDetailsService {
             return new RestFailure("No user found with that username.");
         }
     }
+
+
+
+
+
+
+
+    // ===============
+    // Special-use code
+    // ===============
 
 
     /**
@@ -152,11 +161,21 @@ public class UserService implements UserDetailsService {
         return new User(user.get().getUsername(), user.get().getPassword(), user.get().getPermissions());
     }
 
+    public Optional<UserInfoSend> getUserDTO(String username){
+        Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(username);
+        return user.map(UserInfoSend::new);
+    }
+
     /**
      * User count
      * @return The number of users in the database
      */
     public long userCount() {
         return userRepository.count();
+    }
+
+
+    private String getCurrentUsername() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 }
