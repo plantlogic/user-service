@@ -6,9 +6,11 @@ import edu.csumb.spring19.capstone.dto.RestFailure;
 import edu.csumb.spring19.capstone.dto.RestSuccess;
 import edu.csumb.spring19.capstone.dto.user.UserInfoReceive;
 import edu.csumb.spring19.capstone.dto.user.UserInfoSend;
+import edu.csumb.spring19.capstone.models.PLRole;
 import edu.csumb.spring19.capstone.models.PLUser;
 import edu.csumb.spring19.capstone.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,7 +18,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserInterface implements UserDetailsService {
@@ -88,7 +94,8 @@ public class UserInterface implements UserDetailsService {
 
         try {
             String pass = generatePassword();
-            userRepository.save(new PLUser(user.getUsername(), passwordEncoder.encode(pass), user.getRealName(), user.getEmail()));
+            userRepository.save(new PLUser(user.getUsername(), passwordEncoder.encode(pass), user.getRealName(), user.getEmail(),
+                  parsePermissions(user.getPermissions())));
             return new RestData<>(pass);
         } catch (Exception e) {
             return new RestFailure(e.getMessage());
@@ -106,7 +113,11 @@ public class UserInterface implements UserDetailsService {
                         "admin",
                         passwordEncoder.encode("admin"),
                         "Default Admin",
-                        "hello@plantlogic.org"
+                        "hello@plantlogic.org",
+                        new ArrayList<GrantedAuthority>(Arrays.asList(
+                              PLRole.DATA_VIEW, PLRole.DATA_EDIT, PLRole.DATA_ENTRY,
+                              PLRole.USER_MANAGEMENT, PLRole.APP_ADMIN
+                        ))
                   )
             );
         }
@@ -125,6 +136,15 @@ public class UserInterface implements UserDetailsService {
             pass = pass + String.valueOf(alph[(new Long(Math.round(Math.random()*alph.length))).intValue()]);
         }
         return pass;
+    }
+
+    /**
+     * Converts a list of string permissions into a list of granted authorities using our PLRole
+     * @param in List of strings matching PLRole enum
+     * @return List of granted authorities implemented by PLRole enum
+     */
+    private List<GrantedAuthority> parsePermissions(List<String> in) {
+        return in.stream().map(PLRole::valueOf).collect(Collectors.toList());
     }
 
     @Override

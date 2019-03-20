@@ -1,7 +1,7 @@
 package edu.csumb.spring19.capstone.dto.user;
 
 import edu.csumb.spring19.capstone.models.PLUser;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Calendar;
 import java.util.List;
@@ -10,7 +10,7 @@ public class UserInfoSend extends UserDTO {
     private String realName;
     private String email;
     private Calendar passwordUpdated;
-    private List<SimpleGrantedAuthority> permissions;
+    private List<GrantedAuthority> permissions;
 
     public UserInfoSend(PLUser user) {
         super.username = user.getUsername();
@@ -21,7 +21,7 @@ public class UserInfoSend extends UserDTO {
     }
 
     public UserInfoSend(String username, String realName, String email, Calendar passwordUpdated,
-                        List<SimpleGrantedAuthority> permissions) {
+                        List<GrantedAuthority> permissions) {
         super.username = username;
         this.realName = realName;
         this.email = email;
@@ -45,7 +45,7 @@ public class UserInfoSend extends UserDTO {
         return passwordUpdated;
     }
 
-    public List<SimpleGrantedAuthority> getPermissions() {
+    public List<GrantedAuthority> getPermissions() {
         return permissions;
     }
 }
