@@ -46,4 +46,11 @@ public class UserController {
     public RestDTO deleteUser(@RequestBody UserDTO user) {
         return userService.deleteUser(user.getUsername());
     }
+
+    @ApiOperation(value = "Resets user's password - emails them a random temporary password and forces them to change it on login.",
+        authorizations = {@Authorization(value = "Bearer")})
+    @PostMapping("/resetPassword")
+    public RestDTO resetPassword(@RequestBody UserDTO user) {
+        return userService.resetPassword(user.getUsername());
+    }
 }

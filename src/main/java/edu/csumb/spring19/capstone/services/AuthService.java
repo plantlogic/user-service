@@ -5,12 +5,14 @@ import edu.csumb.spring19.capstone.dto.RestData;
 import edu.csumb.spring19.capstone.dto.RestFailure;
 import edu.csumb.spring19.capstone.dto.RestSuccess;
 import edu.csumb.spring19.capstone.dto.auth.AuthDTO;
+import edu.csumb.spring19.capstone.helpers.PasswordGenerator;
 import edu.csumb.spring19.capstone.models.PLUser;
 import edu.csumb.spring19.capstone.repositories.UserRepository;
 import edu.csumb.spring19.capstone.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -29,6 +31,11 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private MailService mailService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public RestDTO signin(String username, String password) {
         try {
@@ -47,11 +54,17 @@ public class AuthService {
         }
     }
 
-    public RestDTO resetPassword(String username) throws Exception {
-        Optional<PLUser> user = userRepository.findById(username);
-        if (!user.isPresent()) throw new Exception("User does not exist.");
-        user.get().resetPassword();
-        userRepository.save(user.get());
-        return new RestSuccess();
+    public RestDTO resetPassword(String username) {
+        Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(username);
+        if (user.isPresent()) {
+            String pass = PasswordGenerator.newPass();
+            user.get().changePassword(passwordEncoder.encode(pass));
+            user.get().resetPassword();
+            userRepository.save(user.get());
+            mailService.passwordReset(user.get().getEmail(), user.get().getRealName(), pass);
+            return new RestSuccess();
+        } else {
+            return new RestFailure("No user found with that username.");
+        }
     }
 }

@@ -19,6 +19,7 @@ public class SelfService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+
     public RestDTO changePassword(String oldPassword, String newPassword) throws Exception {
         PLUser user = getCurrentUser();
         if (passwordEncoder.matches(oldPassword, user.getPassword())) {
@@ -33,13 +34,13 @@ public class SelfService {
     }
 
     private PLUser getCurrentUser() throws Exception {
-        Optional<PLUser> user = userRepository.findById(getCurrentUsername());
+        Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(getCurrentUsername());
         if (!user.isPresent()) throw new Exception("User does not exist.");
         return user.get();
     }
 
     private Boolean saveCurrentUser(PLUser adjusted) throws Exception {
-        if (!getCurrentUsername().equals(adjusted.getUsername()) && userRepository.existsById(adjusted.getUsername()))
+        if (!getCurrentUsername().equals(adjusted.getUsername()) && userRepository.existsByUsername(adjusted.getUsername()))
             throw new Exception("You're trying to overwrite a different user, which is not allowed.");
 
         userRepository.save(adjusted);
