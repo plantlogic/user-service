@@ -11,6 +11,7 @@ public class UserInfoSend extends UserDTO {
     private String email;
     private Calendar passwordUpdated;
     private List<GrantedAuthority> permissions;
+    private Boolean passwordReset;
 
     public UserInfoSend(PLUser user) {
         super.username = user.getUsername();
@@ -18,15 +19,17 @@ public class UserInfoSend extends UserDTO {
         this.email = user.getEmail();
         this.passwordUpdated = user.getPasswordUpdated();
         this.permissions = user.getPermissions();
+        this.passwordReset = user.isPasswordReset();
     }
 
     public UserInfoSend(String username, String realName, String email, Calendar passwordUpdated,
-                        List<GrantedAuthority> permissions) {
+                        List<GrantedAuthority> permissions, Boolean passwordReset) {
         super.username = username;
         this.realName = realName;
         this.email = email;
         this.passwordUpdated = passwordUpdated;
         this.permissions = permissions;
+        this.passwordReset = passwordReset;
     }
 
     public String getUsername() {
@@ -47,5 +50,9 @@ public class UserInfoSend extends UserDTO {
 
     public List<GrantedAuthority> getPermissions() {
         return permissions;
+    }
+
+    public Boolean getPasswordReset() {
+        return passwordReset;
     }
 }

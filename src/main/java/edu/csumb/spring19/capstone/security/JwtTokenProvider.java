@@ -1,7 +1,7 @@
 package edu.csumb.spring19.capstone.security;
 
 import edu.csumb.spring19.capstone.dto.auth.TokenDTO;
-import edu.csumb.spring19.capstone.services.UserInterface;
+import edu.csumb.spring19.capstone.services.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -23,7 +23,7 @@ import java.util.Date;
 public class JwtTokenProvider {
     private long validityInMilliseconds = 1 * 60 * 60 * 1000; // 1h
     @Autowired
-    public UserInterface userRepository;
+    public UserService userRepository;
 
     public Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 

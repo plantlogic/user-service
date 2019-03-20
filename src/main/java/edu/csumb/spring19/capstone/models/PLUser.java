@@ -1,15 +1,14 @@
 package edu.csumb.spring19.capstone.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -25,18 +24,18 @@ public class PLUser {
     @NotEmpty
     private String realName;
     private Calendar passwordUpdated;
+    private Boolean passwordReset;
     private List<GrantedAuthority> permissions;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    public PLUser(String username, String password, String realName, String email, List<GrantedAuthority> permissions){
+    public PLUser(String username, String password, String realName, String email, List<GrantedAuthority> permissions,
+                  Boolean passwordReset){
         this.username = username;
         this.password = password;
         this.realName = realName;
         this.email = email;
         this.passwordUpdated = Calendar.getInstance();
         this.permissions = permissions;
+        this.passwordReset = passwordReset;
     }
 
     public String getUsername() {
@@ -61,14 +60,21 @@ public class PLUser {
     }
 
     public List<GrantedAuthority> getPermissions() {
-        return this.permissions;
+        if (passwordReset) return new ArrayList<>();
+        else return this.permissions;
     }
 
+    public Boolean isPasswordReset() {
+        return passwordReset;
+    }
 
-    public void changePassword(String oldPassword, String newPassword) throws Exception {
-        if (passwordEncoder.matches(oldPassword, this.password)) {
-            this.password = newPassword;
-            this.passwordUpdated = Calendar.getInstance();
-        } else throw new Exception("Password incorrect");
+    public void resetPassword() {
+        this.passwordReset = true;
+    }
+
+    public void changePassword(String newPassword) {
+        this.password = newPassword;
+        this.passwordReset = false;
+        this.passwordUpdated = Calendar.getInstance();
     }
 }

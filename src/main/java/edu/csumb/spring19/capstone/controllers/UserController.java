@@ -4,7 +4,7 @@ import edu.csumb.spring19.capstone.dto.RestDTO;
 import edu.csumb.spring19.capstone.dto.RestData;
 import edu.csumb.spring19.capstone.dto.user.UserDTO;
 import edu.csumb.spring19.capstone.dto.user.UserInfoReceive;
-import edu.csumb.spring19.capstone.services.UserInterface;
+import edu.csumb.spring19.capstone.services.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @PreAuthorize("hasRole('USER_MANAGEMENT')")
 public class UserController {
     @Autowired
-    private UserInterface userService;
+    private UserService userService;
 
     @ApiOperation(value = "List all user accounts.",
           authorizations = {@Authorization(value = "Bearer")})

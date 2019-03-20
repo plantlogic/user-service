@@ -1,6 +1,6 @@
 package edu.csumb.spring19.capstone.security;
 
-import edu.csumb.spring19.capstone.services.UserInterface;
+import edu.csumb.spring19.capstone.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -25,7 +25,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public UserInterface userService;
+    public UserService userService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
