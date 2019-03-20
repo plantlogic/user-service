@@ -77,6 +77,9 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    /**
+     * Overwrites values in a user's info
+     */
     public RestDTO editUser(UserInfoReceiveEdit editedUser) {
         if (editedUser.usernameChanged() && userRepository.existsByUsername(editedUser.getUsername())) {
             return new RestFailure("That username already exists.");
@@ -96,6 +99,8 @@ public class UserService implements UserDetailsService {
                   editedUser.getRealName(),
                   parsedPermissions
                   );
+            // Delete old user entry from DB if username has been changed
+            if (editedUser.usernameChanged()) userRepository.deleteByUsername(editedUser.getInitialUsername());
             userRepository.save(user.get());
             return new RestSuccess();
         } else {
