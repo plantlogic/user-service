@@ -10,18 +10,16 @@ import java.util.Properties;
 
 @Service
 public class JavaMailConfig {
-    @Value("${SMTP_HOST}")
+    @Value("${SMTP_HOST: }")
     private String host;
     @Value("${SMTP_PORT:587}")
     private Integer port;
-    @Value("${SMTP_USERNAME}")
+    @Value("${SMTP_USERNAME: }")
     private String username;
-    @Value("${SMTP_PASSWORD}")
+    @Value("${SMTP_PASSWORD: }")
     private String password;
     @Value("${SMTP_TLS:true}")
     private String tlsEnabled;
-    @Value("${SMTP_FROM}")
-    private static String fromAddress;
 
 
     @Bean
@@ -41,9 +39,5 @@ public class JavaMailConfig {
         props.put("mail.debug", "false");
 
         return mailSender;
-    }
-
-    public static String getFromAddress() {
-        return fromAddress;
     }
 }

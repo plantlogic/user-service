@@ -9,15 +9,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 public class ErrorPage implements ErrorController {
     private static final String PATH = "/error";
 
     @RequestMapping("/error")
-    public RestDTO handleError(HttpServletRequest request) {
+    public RestDTO handleError(HttpServletRequest request, HttpServletResponse response) {
         Exception error = (Exception) request.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
         Integer status = (Integer) request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
+        response.setStatus(200);
+
         if (error != null) return new RestFailure(error.getMessage());
         else if (status != null) {
             switch (status) {
@@ -26,6 +29,7 @@ public class ErrorPage implements ErrorController {
                 case 404:
                     return new RestFailure("The API call requested does not exist.");
                 default:
+                    //response.setStatus(status);
                     return new RestFailure(HttpStatus.valueOf(status).getReasonPhrase());
             }
         }

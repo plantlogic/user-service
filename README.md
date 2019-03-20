@@ -7,8 +7,7 @@
 # 🌱 PlantLogic | User Service
 
 
-## Environment Variables
-* **APP_NAME:** Default is `PlantLogic`.
+## Docker Environment Variables
 ### Email
 When deploying just this service, these can be set by copying the 
 `smtp-config.example.env` to `smtp-config.env` and adjusting the variables
@@ -20,3 +19,7 @@ appropriately.
 * **SMTP_FROM**
 * **SMTP_TLS:** `true`/`false`
 (Sets whether StartTLS is required for connection. Default is `true`.)
+### App Configuration
+* **SERVER_SERVLET_CONTEXT_PATH**: The path that the service listens to. If served from `example.com/api/user/`, this should be 
+`/api/user` (which is the default).
+* **APP_NAME:** Default is `PlantLogic`.

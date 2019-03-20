@@ -95,15 +95,11 @@ public class UserService implements UserDetailsService {
         if (user.anyEmptyVal()) return new RestFailure("All fields must be filled.");
         if (userRepository.existsById(user.getUsername())) return new RestFailure("User already exists.");
 
-        try {
-            String pass = generatePassword();
-            userRepository.save(new PLUser(user.getUsername(), passwordEncoder.encode(pass), user.getRealName(), user.getEmail(),
-                  parsePermissions(user.getPermissions())));
-            mailService.newAccountCreated(user.getEmail(), user.getRealName(), user.getUsername(), pass);
-            return new RestSuccess();
-        } catch (Exception e) {
-            return new RestFailure(e.getMessage());
-        }
+        String pass = generatePassword();
+        userRepository.save(new PLUser(user.getUsername(), passwordEncoder.encode(pass), user.getRealName(), user.getEmail(),
+              parsePermissions(user.getPermissions()), true));
+        mailService.newAccountCreated(user.getEmail(), user.getRealName(), user.getUsername(), pass);
+        return new RestSuccess();
     }
 
 
@@ -121,7 +117,8 @@ public class UserService implements UserDetailsService {
                         new ArrayList<GrantedAuthority>(Arrays.asList(
                               PLRole.DATA_VIEW, PLRole.DATA_EDIT, PLRole.DATA_ENTRY,
                               PLRole.USER_MANAGEMENT, PLRole.APP_ADMIN
-                        ))
+                        )),
+                        false
                   )
             );
         }
@@ -135,11 +132,11 @@ public class UserService implements UserDetailsService {
     // TODO: Temporary alternative to emailing a password reset link
     private String generatePassword() {
         char[] alph = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
-        String pass = "";
+        StringBuilder pass = new StringBuilder();
         for (int i = 0; i < 20; i++) {
-            pass = pass + String.valueOf(alph[(new Long(Math.round(Math.random()*alph.length))).intValue()]);
+            pass.append(alph[(int) (Math.random() * alph.length)]);
         }
-        return pass;
+        return pass.toString();
     }
 
     /**

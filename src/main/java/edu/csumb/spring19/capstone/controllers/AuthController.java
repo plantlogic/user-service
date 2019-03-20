@@ -1,6 +1,7 @@
 package edu.csumb.spring19.capstone.controllers;
 
 import edu.csumb.spring19.capstone.dto.RestDTO;
+import edu.csumb.spring19.capstone.dto.user.UserDTO;
 import edu.csumb.spring19.capstone.dto.user.UserPass;
 import edu.csumb.spring19.capstone.services.AuthService;
 import io.swagger.annotations.ApiOperation;
@@ -16,7 +17,13 @@ public class AuthController {
 
     @ApiOperation(value = "Sign in and issue a token for the user.")
     @PostMapping("/signin")
-    public RestDTO signin(@RequestBody UserPass user) throws Throwable {
+    public RestDTO signin(@RequestBody UserPass user) {
         return authService.signin(user.getUsername(), user.getPassword());
+    }
+
+    @ApiOperation(value = "Force the user to enter a new password on login.")
+    @PostMapping("/resetPassword")
+    public RestDTO resetPassword(@RequestBody UserDTO user) throws Throwable {
+        return authService.resetPassword(user.getUsername());
     }
 }

@@ -3,12 +3,17 @@ package edu.csumb.spring19.capstone.services;
 import edu.csumb.spring19.capstone.dto.RestDTO;
 import edu.csumb.spring19.capstone.dto.RestData;
 import edu.csumb.spring19.capstone.dto.RestFailure;
+import edu.csumb.spring19.capstone.dto.RestSuccess;
 import edu.csumb.spring19.capstone.dto.auth.AuthDTO;
+import edu.csumb.spring19.capstone.models.PLUser;
+import edu.csumb.spring19.capstone.repositories.UserRepository;
 import edu.csumb.spring19.capstone.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -19,14 +24,12 @@ public class AuthService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private UserService userRepository;
+    private UserService userService;
 
-    /**
-     * Authenticate a user with the specified username and password
-     * @param username
-     * @param password
-     * @return
-     */
+    @Autowired
+    private UserRepository userRepository;
+
+
     public RestDTO signin(String username, String password) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
@@ -34,14 +37,21 @@ public class AuthService {
                   new AuthDTO(
                         jwtTokenProvider.createToken(
                               username,
-                              userRepository.loadUserByUsername(username).getAuthorities()
+                              userService.loadUserByUsername(username).getAuthorities()
                         ),
-                        userRepository.getUserDTO(username).get()
+                        userService.getUserDTO(username).get()
                   )
             );
         } catch (Exception e) {
-            //return new RestFailure("Username or password was incorrect.");
-            return new RestFailure(e.getMessage());
+            return new RestFailure("Username or password is incorrect.");
         }
+    }
+
+    public RestDTO resetPassword(String username) throws Exception {
+        Optional<PLUser> user = userRepository.findById(username);
+        if (!user.isPresent()) throw new Exception("User does not exist.");
+        user.get().resetPassword();
+        userRepository.save(user.get());
+        return new RestSuccess();
     }
 }
