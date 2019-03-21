@@ -70,7 +70,7 @@ public class UserService implements UserDetailsService {
         if (getCurrentUsername().equals(username)) {
             return new RestFailure("You can't delete the current user.");
         } else if (user.isPresent()) {
-            userRepository.deleteByUsername(username);
+            userRepository.deleteByUsernameIgnoreCase(username);
             return new RestSuccess();
         } else {
             return new RestFailure("No user found with that username.");
@@ -81,7 +81,7 @@ public class UserService implements UserDetailsService {
      * Overwrites values in a user's info
      */
     public RestDTO editUser(UserInfoReceiveEdit editedUser) {
-        if (editedUser.usernameChanged() && userRepository.existsByUsername(editedUser.getUsername())) {
+        if (editedUser.usernameChanged() && userRepository.existsByUsernameIgnoreCase(editedUser.getUsername())) {
             return new RestFailure("That username already exists.");
         }
 
@@ -94,13 +94,13 @@ public class UserService implements UserDetailsService {
         Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(editedUser.getInitialUsername());
         if (user.isPresent()) {
             user.get().importEdits(
-                  editedUser.getUsername(),
+                  editedUser.getUsername().toLowerCase(),
                   editedUser.getEmail(),
                   editedUser.getRealName(),
                   parsedPermissions
                   );
             // Delete old user entry from DB if username has been changed
-            if (editedUser.usernameChanged()) userRepository.deleteByUsername(editedUser.getInitialUsername());
+            if (editedUser.usernameChanged()) userRepository.deleteByUsernameIgnoreCase(editedUser.getInitialUsername());
             userRepository.save(user.get());
             return new RestSuccess();
         } else {
@@ -115,10 +115,10 @@ public class UserService implements UserDetailsService {
      */
     public RestDTO addUser(UserInfoReceive user) {
         if (user.anyEmptyVal()) return new RestFailure("All fields must be filled.");
-        if (userRepository.existsByUsername(user.getUsername())) return new RestFailure("That user already exists. Please change username.");
+        if (userRepository.existsByUsernameIgnoreCase(user.getUsername())) return new RestFailure("That user already exists. Please change username.");
 
         String pass = PasswordGenerator.newPass();
-        userRepository.save(new PLUser(user.getUsername(), passwordEncoder.encode(pass), user.getRealName(), user.getEmail(),
+        userRepository.save(new PLUser(user.getUsername().toLowerCase(), passwordEncoder.encode(pass), user.getRealName(), user.getEmail(),
               parsePermissions(user.getPermissions()), true));
         mailService.newAccountCreated(user.getEmail(), user.getRealName(), user.getUsername(), pass);
         return new RestSuccess();

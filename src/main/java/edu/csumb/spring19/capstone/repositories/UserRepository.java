@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface UserRepository extends CrudRepository<PLUser, String> {
     Optional<PLUser> findByUsernameIgnoreCase(String username);
 
-    void deleteByUsername(String username);
+    void deleteByUsernameIgnoreCase(String username);
 
-    boolean existsByUsername(String username);
+    boolean existsByUsernameIgnoreCase(String username);
 }

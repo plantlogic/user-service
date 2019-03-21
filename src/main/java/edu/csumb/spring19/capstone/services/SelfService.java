@@ -67,7 +67,7 @@ public class SelfService {
     }
 
     private Boolean saveCurrentUser(PLUser adjusted) throws Exception {
-        if (!getCurrentUsername().equals(adjusted.getUsername()) && userRepository.existsByUsername(adjusted.getUsername()))
+        if (!getCurrentUsername().equals(adjusted.getUsername()) && userRepository.existsByUsernameIgnoreCase(adjusted.getUsername()))
             throw new Exception("You're trying to overwrite a different user, which is not allowed.");
 
         userRepository.save(adjusted);
