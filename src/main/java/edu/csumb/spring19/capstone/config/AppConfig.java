@@ -9,7 +9,7 @@ public class AppConfig {
     @Value("${APP_NAME:PlantLogic}")
     private String appName;
 
-    @Value("${APP_URL}")
+    @Value("${APP_URL: }")
     private String appURL;
 
     public String getAppName() {
