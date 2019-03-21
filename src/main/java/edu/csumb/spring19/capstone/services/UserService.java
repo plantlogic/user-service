@@ -83,6 +83,7 @@ public class UserService implements UserDetailsService {
      */
     public RestDTO editUser(UserInfoReceiveEdit editedUser) {
         if (editedUser.anyEmptyVal()) return new RestFailure("All fields must be filled.");
+        editedUser.unifyStringCase();
 
         if (editedUser.usernameChanged() && userRepository.existsByUsernameIgnoreCase(editedUser.getUsername())) {
             return new RestFailure("That username already exists.");
@@ -118,6 +119,8 @@ public class UserService implements UserDetailsService {
      */
     public RestDTO addUser(UserInfoReceive user) {
         if (user.anyEmptyVal()) return new RestFailure("All fields must be filled.");
+        user.unifyStringCase();
+
         if (userRepository.existsByUsernameIgnoreCase(user.getUsername())) return new RestFailure("That user already exists. Please change username.");
 
         String pass = PasswordGenerator.newPass();
