@@ -11,7 +11,7 @@ public class UserInfoReceiveEdit extends UserInfoReceive {
     }
 
     public Boolean usernameChanged() {
-        return !initialUsername.equals(super.getUsername());
+        return !initialUsername.equalsIgnoreCase(super.getUsername());
     }
 
     public String getInitialUsername() {

@@ -86,7 +86,7 @@ public class UserService implements UserDetailsService {
         }
 
         List<GrantedAuthority> parsedPermissions = parsePermissions(editedUser.getPermissions());
-        if (!parsedPermissions.contains(PLRole.USER_MANAGEMENT)) {
+        if (editedUser.getInitialUsername().equalsIgnoreCase(getCurrentUsername()) && !parsedPermissions.contains(PLRole.USER_MANAGEMENT)) {
             return new RestFailure("Admins with 'User Management' permission " +
                   "cannot remove their own 'User Management' permissions.");
         }
