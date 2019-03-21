@@ -20,6 +20,7 @@ public class UserInfoReceiveEdit extends UserInfoReceive {
         return initialUsername;
     }
 
+    @Override
     public Boolean anyEmptyVal() {
         return super.anyEmptyVal() || Strings.isNullOrEmpty(initialUsername);
     }

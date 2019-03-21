@@ -38,4 +38,9 @@ public class UserInfoReceive extends UserDTO {
               || Strings.isNullOrEmpty(this.email)
               || permissions == null;
     }
+
+    public void unifyStringCase() {
+        username = username.toLowerCase();
+        email = email.toLowerCase();
+    }
 }
