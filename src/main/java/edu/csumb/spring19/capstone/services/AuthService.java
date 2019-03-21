@@ -37,7 +37,7 @@ public class AuthService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public RestDTO signin(String username, String password) {
+    public RestDTO signIn(String username, String password) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
             return new RestData<>(
@@ -54,6 +54,7 @@ public class AuthService {
         }
     }
 
+    @SuppressWarnings("Duplicates")
     public RestDTO resetPassword(String username) {
         Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(username);
         if (user.isPresent()) {

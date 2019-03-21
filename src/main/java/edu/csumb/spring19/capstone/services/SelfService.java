@@ -1,10 +1,13 @@
 package edu.csumb.spring19.capstone.services;
 
 import edu.csumb.spring19.capstone.dto.RestDTO;
+import edu.csumb.spring19.capstone.dto.RestData;
 import edu.csumb.spring19.capstone.dto.RestFailure;
 import edu.csumb.spring19.capstone.dto.RestSuccess;
+import edu.csumb.spring19.capstone.dto.auth.AuthDTO;
 import edu.csumb.spring19.capstone.models.PLUser;
 import edu.csumb.spring19.capstone.repositories.UserRepository;
+import edu.csumb.spring19.capstone.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +21,10 @@ public class SelfService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+    @Autowired
+    private UserService userService;
 
 
     public RestDTO changePassword(String oldPassword, String newPassword) throws Exception {
@@ -32,6 +39,26 @@ public class SelfService {
             }
         } else return new RestFailure("Current password is incorrect.");
     }
+
+    public RestDTO renewToken() {
+        String username = getCurrentUsername();
+        return new RestData<>(
+              new AuthDTO(
+                    jwtTokenProvider.createToken(
+                          username,
+                          userService.loadUserByUsername(username).getAuthorities()
+                    ),
+                    userService.getUserDTO(username).get()
+              )
+        );
+    }
+
+
+
+
+    // ==============
+    // Internal code
+    // ==============
 
     private PLUser getCurrentUser() throws Exception {
         Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(getCurrentUsername());

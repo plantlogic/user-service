@@ -68,6 +68,11 @@ public class PLUser {
         return passwordReset;
     }
 
+
+    // ===================
+    // Quick Edit Methods
+    // ===================
+
     public void resetPassword() {
         this.passwordReset = true;
     }
@@ -76,5 +81,12 @@ public class PLUser {
         this.password = newPassword;
         this.passwordReset = false;
         this.passwordUpdated = Calendar.getInstance();
+    }
+
+    public void importEdits(String username, String email, String realName, List<GrantedAuthority> permissions) {
+        this.username = username;
+        this.email = email;
+        this.realName = realName;
+        this.permissions = permissions;
     }
 }

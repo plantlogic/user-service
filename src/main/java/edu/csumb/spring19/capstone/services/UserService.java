@@ -5,6 +5,7 @@ import edu.csumb.spring19.capstone.dto.RestData;
 import edu.csumb.spring19.capstone.dto.RestFailure;
 import edu.csumb.spring19.capstone.dto.RestSuccess;
 import edu.csumb.spring19.capstone.dto.user.UserInfoReceive;
+import edu.csumb.spring19.capstone.dto.user.UserInfoReceiveEdit;
 import edu.csumb.spring19.capstone.dto.user.UserInfoSend;
 import edu.csumb.spring19.capstone.helpers.PasswordGenerator;
 import edu.csumb.spring19.capstone.models.PLRole;
@@ -12,6 +13,7 @@ import edu.csumb.spring19.capstone.models.PLUser;
 import edu.csumb.spring19.capstone.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -58,11 +60,6 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public Optional<UserInfoSend> getUserDTO(String username){
-        Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(username);
-        return user.map(UserInfoSend::new);
-    }
-
     /**
      * Deletes user with the specified username
      * @param username The username to look for
@@ -70,8 +67,41 @@ public class UserService implements UserDetailsService {
      */
     public RestDTO deleteUser(String username) {
         Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(username);
-        if (user.isPresent()) {
+        if (getCurrentUsername().equals(username)) {
+            return new RestFailure("You can't delete the current user.");
+        } else if (user.isPresent()) {
             userRepository.deleteByUsername(username);
+            return new RestSuccess();
+        } else {
+            return new RestFailure("No user found with that username.");
+        }
+    }
+
+    /**
+     * Overwrites values in a user's info
+     */
+    public RestDTO editUser(UserInfoReceiveEdit editedUser) {
+        if (editedUser.usernameChanged() && userRepository.existsByUsername(editedUser.getUsername())) {
+            return new RestFailure("That username already exists.");
+        }
+
+        List<GrantedAuthority> parsedPermissions = parsePermissions(editedUser.getPermissions());
+        if (!parsedPermissions.contains(PLRole.USER_MANAGEMENT)) {
+            return new RestFailure("Admins with 'User Management' permission " +
+                  "cannot remove their own 'User Management' permissions.");
+        }
+
+        Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(editedUser.getInitialUsername());
+        if (user.isPresent()) {
+            user.get().importEdits(
+                  editedUser.getUsername(),
+                  editedUser.getEmail(),
+                  editedUser.getRealName(),
+                  parsedPermissions
+                  );
+            // Delete old user entry from DB if username has been changed
+            if (editedUser.usernameChanged()) userRepository.deleteByUsername(editedUser.getInitialUsername());
+            userRepository.save(user.get());
             return new RestSuccess();
         } else {
             return new RestFailure("No user found with that username.");
@@ -97,6 +127,7 @@ public class UserService implements UserDetailsService {
     /**
      * Generates a random password for the user and emails it to them, forcing them to change their password on next log in
      */
+    @SuppressWarnings("Duplicates")
     public RestDTO resetPassword(String username) {
         Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(username);
         if (user.isPresent()) {
@@ -110,6 +141,16 @@ public class UserService implements UserDetailsService {
             return new RestFailure("No user found with that username.");
         }
     }
+
+
+
+
+
+
+
+    // ===============
+    // Special-use code
+    // ===============
 
 
     /**
@@ -152,11 +193,21 @@ public class UserService implements UserDetailsService {
         return new User(user.get().getUsername(), user.get().getPassword(), user.get().getPermissions());
     }
 
+    public Optional<UserInfoSend> getUserDTO(String username){
+        Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(username);
+        return user.map(UserInfoSend::new);
+    }
+
     /**
      * User count
      * @return The number of users in the database
      */
     public long userCount() {
         return userRepository.count();
+    }
+
+
+    private String getCurrentUsername() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 }

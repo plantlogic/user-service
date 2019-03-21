@@ -1,6 +1,7 @@
 package edu.csumb.spring19.capstone.controllers;
 
 import edu.csumb.spring19.capstone.dto.RestDTO;
+import edu.csumb.spring19.capstone.dto.RestSuccess;
 import edu.csumb.spring19.capstone.dto.user.PasswordChange;
 import edu.csumb.spring19.capstone.services.SelfService;
 import io.swagger.annotations.ApiOperation;
@@ -23,5 +24,19 @@ public class SelfController {
               request.getOldPassword(),
               request.getNewPassword()
         );
+    }
+
+    @ApiOperation(value = "Get a new token.",
+          authorizations = {@Authorization(value = "Bearer")})
+    @GetMapping("/renewToken")
+    public RestDTO renewToken() {
+        return selfService.renewToken();
+    }
+
+    @ApiOperation(value = "Will only return 'success' if token is valid.",
+          authorizations = {@Authorization(value = "Bearer")})
+    @GetMapping("/tokenValid")
+    public RestDTO tokenValid() {
+        return new RestSuccess();
     }
 }

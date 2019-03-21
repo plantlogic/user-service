@@ -5,9 +5,9 @@ import com.google.common.base.Strings;
 import java.util.List;
 
 public class UserInfoReceive extends UserDTO {
-    private String realName;
-    private String email;
-    private List<String> permissions;
+    protected String realName;
+    protected String email;
+    protected List<String> permissions;
 
     public UserInfoReceive(String username, String realName, String email, List<String> permissions) {
         super.username = username;

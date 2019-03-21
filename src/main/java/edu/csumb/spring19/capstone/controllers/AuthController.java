@@ -16,9 +16,9 @@ public class AuthController {
     private AuthService authService;
 
     @ApiOperation(value = "Sign in and issue a token for the user.")
-    @PostMapping("/signin")
-    public RestDTO signin(@RequestBody UserPass user) {
-        return authService.signin(user.getUsername(), user.getPassword());
+    @PostMapping("/signIn")
+    public RestDTO signIn(@RequestBody UserPass user) {
+        return authService.signIn(user.getUsername(), user.getPassword());
     }
 
     @ApiOperation(value = "Resets user's password - emails them a random temporary password and forces them to change it on login.")
