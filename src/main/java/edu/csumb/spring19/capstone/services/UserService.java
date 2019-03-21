@@ -94,7 +94,7 @@ public class UserService implements UserDetailsService {
         Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(editedUser.getInitialUsername());
         if (user.isPresent()) {
             user.get().importEdits(
-                  editedUser.getUsername(),
+                  editedUser.getUsername().toLowerCase(),
                   editedUser.getEmail(),
                   editedUser.getRealName(),
                   parsedPermissions
@@ -118,7 +118,7 @@ public class UserService implements UserDetailsService {
         if (userRepository.existsByUsernameIgnoreCase(user.getUsername())) return new RestFailure("That user already exists. Please change username.");
 
         String pass = PasswordGenerator.newPass();
-        userRepository.save(new PLUser(user.getUsername(), passwordEncoder.encode(pass), user.getRealName(), user.getEmail(),
+        userRepository.save(new PLUser(user.getUsername().toLowerCase(), passwordEncoder.encode(pass), user.getRealName(), user.getEmail(),
               parsePermissions(user.getPermissions()), true));
         mailService.newAccountCreated(user.getEmail(), user.getRealName(), user.getUsername(), pass);
         return new RestSuccess();
