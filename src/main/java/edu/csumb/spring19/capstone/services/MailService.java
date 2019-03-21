@@ -40,7 +40,7 @@ public class MailService {
                     p("An administrator has created you a " + appConfig.getAppName() + " account."),
 
                     p(
-                          li("Your username is: " + username), br(),
+                          li("Your username is: " + username),
                           li("Your temporary password is: " + token)
                     ),
 
