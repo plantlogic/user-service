@@ -23,3 +23,4 @@ appropriately.
 * **SERVER_SERVLET_CONTEXT_PATH**: The path that the service listens to. If served from `example.com/api/user/`, this should be 
 `/api/user` (which is the default).
 * **APP_NAME:** Default is `PlantLogic`.
+* **APP_URL:** Will be inserted into emails.
