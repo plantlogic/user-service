@@ -4,6 +4,7 @@ services:
     build: ./
     environment:
       - APP_NAME=PlantLogic
+      - APP_URL=example.com
     env_file:
       - ./smtp-config.env
     depends_on:

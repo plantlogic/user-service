@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -81,6 +82,8 @@ public class UserService implements UserDetailsService {
      * Overwrites values in a user's info
      */
     public RestDTO editUser(UserInfoReceiveEdit editedUser) {
+        if (editedUser.anyEmptyVal()) return new RestFailure("All fields must be filled.");
+
         if (editedUser.usernameChanged() && userRepository.existsByUsernameIgnoreCase(editedUser.getUsername())) {
             return new RestFailure("That username already exists.");
         }
@@ -120,7 +123,12 @@ public class UserService implements UserDetailsService {
         String pass = PasswordGenerator.newPass();
         userRepository.save(new PLUser(user.getUsername().toLowerCase(), passwordEncoder.encode(pass), user.getRealName(), user.getEmail(),
               parsePermissions(user.getPermissions()), true));
-        mailService.newAccountCreated(user.getEmail(), user.getRealName(), user.getUsername(), pass);
+        try {
+            mailService.newAccountCreated(user.getEmail(), user.getRealName(), user.getUsername(), pass);
+        } catch (MessagingException e) {
+            userRepository.deleteByUsernameIgnoreCase(user.getUsername());
+            return new RestFailure("There was an error sending the password email. Please try again.");
+        }
         return new RestSuccess();
     }
 
@@ -135,7 +143,11 @@ public class UserService implements UserDetailsService {
             user.get().changePassword(passwordEncoder.encode(pass));
             user.get().resetPassword();
             userRepository.save(user.get());
-            mailService.passwordReset(user.get().getEmail(), user.get().getRealName(), pass);
+            try {
+                mailService.passwordReset(user.get().getEmail(), user.get().getRealName(), pass);
+            } catch (MessagingException e) {
+                return new RestFailure("There was an error sending the password reset email. Please try again.");
+            }
             return new RestSuccess();
         } else {
             return new RestFailure("No user found with that username.");

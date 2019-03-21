@@ -1,5 +1,7 @@
 package edu.csumb.spring19.capstone.dto.user;
 
+import com.google.common.base.Strings;
+
 import java.util.List;
 
 public class UserInfoReceiveEdit extends UserInfoReceive {
@@ -16,5 +18,9 @@ public class UserInfoReceiveEdit extends UserInfoReceive {
 
     public String getInitialUsername() {
         return initialUsername;
+    }
+
+    public Boolean anyEmptyVal() {
+        return super.anyEmptyVal() || Strings.isNullOrEmpty(initialUsername);
     }
 }

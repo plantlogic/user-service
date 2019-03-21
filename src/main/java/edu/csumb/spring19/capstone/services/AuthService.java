@@ -15,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.util.Optional;
 
 @Service
@@ -62,7 +63,11 @@ public class AuthService {
             user.get().changePassword(passwordEncoder.encode(pass));
             user.get().resetPassword();
             userRepository.save(user.get());
-            mailService.passwordReset(user.get().getEmail(), user.get().getRealName(), pass);
+            try {
+                mailService.passwordReset(user.get().getEmail(), user.get().getRealName(), pass);
+            } catch (MessagingException e) {
+                return new RestFailure("There was an error sending the password reset email. Please try again.");
+            }
             return new RestSuccess();
         } else {
             return new RestFailure("No user found with that username.");
