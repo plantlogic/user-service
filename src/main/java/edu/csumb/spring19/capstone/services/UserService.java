@@ -11,6 +11,7 @@ import edu.csumb.spring19.capstone.helpers.PasswordGenerator;
 import edu.csumb.spring19.capstone.models.PLRole;
 import edu.csumb.spring19.capstone.models.PLUser;
 import edu.csumb.spring19.capstone.repositories.UserRepository;
+import org.apache.commons.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,6 +40,13 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private MailService mailService;
+
+    private final Pattern usernameRegex = Pattern.compile("^[a-zA-Z0-9._-]+$");
+    private final String usernameRegexError = "Usernames may only contain alphanumeric characters and periods, underscores, or dashes.";
+    private final Pattern realNameRegex = Pattern.compile("^[a-zA-Z]+([ -][a-zA-Z]+)+$");
+    private final String realNameRegexError = "Please enter the employee's full name like this: \"Jane Doe\". No special characters other" +
+          " than spaces and dashes are allowed.";
+
 
     /**
      * Gets data on all users from mongoDB
@@ -115,12 +124,20 @@ public class UserService implements UserDetailsService {
                   "cannot remove their own 'User Management' permissions.");
         }
 
+        if (!usernameRegex.matcher(editedUser.getUsername()).matches()) {
+            return new RestFailure(usernameRegexError);
+        }
+
+        if (!realNameRegex.matcher(editedUser.getRealName()).matches()) {
+            return new RestFailure(realNameRegexError);
+        }
+
         Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(editedUser.getInitialUsername());
         if (user.isPresent()) {
             user.get().importEdits(
                   editedUser.getUsername().toLowerCase(),
                   editedUser.getEmail(),
-                  editedUser.getRealName(),
+                  WordUtils.capitalizeFully(editedUser.getRealName(), ' ', '-'),
                   parsedPermissions
                   );
             // Delete old user entry from DB if username has been changed
@@ -143,13 +160,30 @@ public class UserService implements UserDetailsService {
 
         if (userRepository.existsByUsernameIgnoreCase(user.getUsername())) return new RestFailure("That user already exists. Please change username.");
 
+        if (!usernameRegex.matcher(user.getUsername()).matches()) {
+            return new RestFailure(usernameRegexError);
+        }
+
+        if (!realNameRegex.matcher(user.getRealName()).matches()) {
+            return new RestFailure(realNameRegexError);
+        }
+
+
         String pass = PasswordGenerator.newPass();
-        userRepository.save(new PLUser(user.getUsername().toLowerCase(), passwordEncoder.encode(pass), user.getRealName(), user.getEmail(),
-              parsePermissions(user.getPermissions()), true));
+        PLUser plUser = new PLUser(
+              user.getUsername().toLowerCase(),
+              passwordEncoder.encode(pass),
+              WordUtils.capitalizeFully(user.getRealName(), ' ', '-'),
+              user.getEmail(),
+              parsePermissions(user.getPermissions()),
+              true
+        );
+        userRepository.save(plUser);
+
         try {
-            mailService.newAccountCreated(user.getEmail(), user.getRealName(), user.getUsername(), pass);
+            mailService.newAccountCreated(plUser.getEmail(), plUser.getRealName(), plUser.getUsername(), pass);
         } catch (MessagingException e) {
-            userRepository.deleteByUsernameIgnoreCase(user.getUsername());
+            userRepository.delete(plUser);
             return new RestFailure("There was an error sending the password email. Please try again.");
         }
         return new RestSuccess();
