@@ -30,8 +30,12 @@ public class UserController {
     @ApiOperation(value = "Get the information for a specific user account.",
           authorizations = {@Authorization(value = "Bearer")})
     @PostMapping("/getUser")
-    public RestDTO getUser(@RequestBody UserDTO user) {
-        return userService.getUser(user.getUsername());
+    public RestDTO getUser(@RequestBody UserDTO user, @RequestParam(required = false) boolean withNonNullPerms) {
+        // Primitive boolean is false by default
+        if (!withNonNullPerms)
+            return userService.getUser(user.getUsername());
+        else
+            return userService.getUserWithoutNulledPerms(user.getUsername());
     }
 
     @ApiOperation(value = "Add user account.",

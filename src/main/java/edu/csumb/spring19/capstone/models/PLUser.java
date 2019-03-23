@@ -64,6 +64,11 @@ public class PLUser {
         else return this.permissions;
     }
 
+    @JsonIgnore
+    public List<GrantedAuthority> getNonNullPermissions() {
+        return this.permissions;
+    }
+
     public Boolean isPasswordReset() {
         return passwordReset;
     }

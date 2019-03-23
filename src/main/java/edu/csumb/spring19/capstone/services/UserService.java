@@ -62,6 +62,26 @@ public class UserService implements UserDetailsService {
     }
 
     /**
+     * When a user has a required password reset, their permissions are
+     * temporarily null until fixed - this method gets those permissions anyway
+     */
+    public RestDTO getUserWithoutNulledPerms(String username) {
+        Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(username);
+        if (user.isPresent()) {
+            return new RestData<>(new UserInfoSend(
+                  user.get().getUsername(),
+                  user.get().getRealName(),
+                  user.get().getEmail(),
+                  user.get().getPasswordUpdated(),
+                  user.get().getNonNullPermissions(),
+                  user.get().isPasswordReset()
+            ));
+        } else {
+            return new RestFailure("No user found with that username.");
+        }
+    }
+
+    /**
      * Deletes user with the specified username
      * @param username The username to look for
      * @return UserInfoSend type with success/failure
