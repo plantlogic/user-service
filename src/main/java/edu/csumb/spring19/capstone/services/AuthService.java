@@ -27,9 +27,6 @@ public class AuthService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -41,15 +38,9 @@ public class AuthService {
     public RestDTO signIn(String username, String password) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-            return new RestData<>(
-                  new AuthDTO(
-                        jwtTokenProvider.createToken(
-                              username,
-                              userService.loadUserByUsername(username).getAuthorities()
-                        ),
-                        userService.getUserDTO(username).get()
-                  )
-            );
+            Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(username);
+            if (!user.isPresent()) return new RestFailure("Username or password is incorrect.");
+            return new RestData<>(jwtTokenProvider.createToken(user.get()));
         } catch (Exception e) {
             return new RestFailure("Username or password is incorrect.");
         }
@@ -70,7 +61,7 @@ public class AuthService {
             }
             return new RestSuccess();
         } else {
-            return new RestFailure("No user found with that username.");
+            return new RestSuccess();
         }
     }
 }
