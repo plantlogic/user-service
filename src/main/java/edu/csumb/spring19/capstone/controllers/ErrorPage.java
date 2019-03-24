@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ErrorPage implements ErrorController {
     private static final String PATH = "/error";
 
-    @RequestMapping("/error")
+    @RequestMapping(PATH)
     public RestDTO handleError(HttpServletRequest request, HttpServletResponse response) {
         Exception error = (Exception) request.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
         Integer status = (Integer) request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);

@@ -22,6 +22,7 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
     private long validityInMilliseconds = 1 * 60 * 60 * 1000; // 1h
+
     @Autowired
     public UserService userRepository;
 
