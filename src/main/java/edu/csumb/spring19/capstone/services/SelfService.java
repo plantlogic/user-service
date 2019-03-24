@@ -41,16 +41,11 @@ public class SelfService {
     }
 
     public RestDTO renewToken() {
-        String username = getCurrentUsername();
-        return new RestData<>(
-              new AuthDTO(
-                    jwtTokenProvider.createToken(
-                          username,
-                          userService.loadUserByUsername(username).getAuthorities()
-                    ),
-                    userService.getUserDTO(username).get()
-              )
-        );
+        try {
+            return new RestData<>(jwtTokenProvider.createToken(getCurrentUser()));
+        } catch (Exception e) {
+            return new RestFailure("There was an error renewing your session. Please logout and log back in.");
+        }
     }
 
 

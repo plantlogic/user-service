@@ -1,6 +1,8 @@
 package edu.csumb.spring19.capstone.security;
 
 import edu.csumb.spring19.capstone.dto.auth.TokenDTO;
+import edu.csumb.spring19.capstone.dto.user.UserInfoSend;
+import edu.csumb.spring19.capstone.models.PLUser;
 import edu.csumb.spring19.capstone.services.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -10,36 +12,35 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
-import java.util.Collection;
 import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
     private long validityInMilliseconds = 1 * 60 * 60 * 1000; // 1h
+
     @Autowired
     public UserService userRepository;
 
-    public Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    public TokenDTO createToken(String username, Collection<? extends GrantedAuthority> roles) {
-        Claims claims = Jwts.claims().setSubject(username);
-        claims.put("auth", roles);
+    public String createToken(PLUser user) {
+        Claims claims = Jwts.claims().setSubject(user.getUsername());
+        claims.put("auth", new UserInfoSend(user));
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
-        return new TokenDTO(validity, Jwts.builder()
+        return Jwts.builder()
               .setClaims(claims)
               .setIssuedAt(now)
               .setExpiration(validity)
               .signWith(secretKey)
-              .compact());
+              .compact();
     }
 
     public Authentication getAuthentication(String token) {
