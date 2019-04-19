@@ -113,7 +113,7 @@ public class UserService implements UserDetailsService {
      */
     public RestDTO editUser(UserInfoReceiveEdit editedUser) {
         if (editedUser.anyEmptyVal()) return new RestFailure("All fields must be filled.");
-        if (!editedUser.passOrEmailOnly()) return new RestFailure("Users must only have either an email or a manually entered password.");
+        if (!editedUser.passOrEmailOnly()) return new RestFailure("Users must have either an email or a manually entered password.");
         editedUser.unifyStringCase();
 
         if (editedUser.usernameChanged() && userRepository.existsByUsernameIgnoreCase(editedUser.getUsername())) {
@@ -124,6 +124,11 @@ public class UserService implements UserDetailsService {
         if (editedUser.getInitialUsername().equalsIgnoreCase(getCurrentUsername()) && !parsedPermissions.contains(PLRole.USER_MANAGEMENT)) {
             return new RestFailure("Admins with 'User Management' permission " +
                   "cannot remove their own 'User Management' permissions.");
+        }
+
+        if (editedUser.getInitialUsername().equalsIgnoreCase(getCurrentUsername()) && Strings.isNullOrEmpty(editedUser.getEmail())) {
+            return new RestFailure("Admins with 'User Management' permission " +
+                  "cannot remove their own email address.");
         }
 
         if (!usernameRegex.matcher(editedUser.getUsername()).matches()) {
@@ -175,7 +180,7 @@ public class UserService implements UserDetailsService {
      */
     public RestDTO addUser(UserInfoReceive user) {
         if (user.anyEmptyVal()) return new RestFailure("All fields must be filled.");
-        if (!user.passOrEmailOnly()) return new RestFailure("Users must only have either an email or a manually entered password.");
+        if (!user.passOrEmailOnly()) return new RestFailure("Users must have either an email or a manually entered password.");
         user.unifyStringCase();
 
         if (userRepository.existsByUsernameIgnoreCase(user.getUsername())) return new RestFailure("That user already exists. Please change username.");
