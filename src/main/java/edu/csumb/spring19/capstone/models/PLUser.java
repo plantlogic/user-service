@@ -6,9 +6,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -16,13 +13,9 @@ import java.util.List;
 @Document(collection = "users")
 public class PLUser {
     @Id
-    @Size(min = 4, message = "Usernames must be at least 4 characters.")
     private String username;
-    @Size(min = 8, message = "Passwords must be at least 8 characters.")
     private String password;
-    @Email(message = "Valid email addresses are required.")
     private String email;
-    @NotEmpty
     private String realName;
     private Calendar passwordUpdated;
     private Boolean passwordReset;
