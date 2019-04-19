@@ -44,8 +44,12 @@ public class UserInfoReceive extends UserDTO {
               || permissions == null;
     }
 
-    public Boolean passOrEmailOnly() {
-        return Strings.isNullOrEmpty(this.email) != Strings.isNullOrEmpty(this.password);
+    public Boolean hasBothPassAndEmail() {
+        return !Strings.isNullOrEmpty(this.email) && !Strings.isNullOrEmpty(this.password);
+    }
+
+    public Boolean hasNeitherPassOrEmail() {
+        return Strings.isNullOrEmpty(this.email) && Strings.isNullOrEmpty(this.password);
     }
 
     public void unifyStringCase() {
