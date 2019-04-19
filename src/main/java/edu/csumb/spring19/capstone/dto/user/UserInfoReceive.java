@@ -50,6 +50,8 @@ public class UserInfoReceive extends UserDTO {
 
     public void unifyStringCase() {
         username = username.toLowerCase();
-        email = email.toLowerCase();
+        if (!Strings.isNullOrEmpty(email)) {
+            email = email.toLowerCase();
+        }
     }
 }
