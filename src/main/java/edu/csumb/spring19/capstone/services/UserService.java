@@ -113,7 +113,7 @@ public class UserService implements UserDetailsService {
      */
     public RestDTO editUser(UserInfoReceiveEdit editedUser) {
         if (editedUser.anyEmptyVal()) return new RestFailure("All fields must be filled.");
-        if (!editedUser.passOrEmailOnly()) return new RestFailure("Users must only have either an email or a manually entered password.");
+        if (!editedUser.passOrEmailOnly()) return new RestFailure("Users must have either an email or a manually entered password.");
         editedUser.unifyStringCase();
 
         if (editedUser.usernameChanged() && userRepository.existsByUsernameIgnoreCase(editedUser.getUsername())) {
@@ -180,7 +180,7 @@ public class UserService implements UserDetailsService {
      */
     public RestDTO addUser(UserInfoReceive user) {
         if (user.anyEmptyVal()) return new RestFailure("All fields must be filled.");
-        if (!user.passOrEmailOnly()) return new RestFailure("Users must only have either an email or a manually entered password.");
+        if (!user.passOrEmailOnly()) return new RestFailure("Users must have either an email or a manually entered password.");
         user.unifyStringCase();
 
         if (userRepository.existsByUsernameIgnoreCase(user.getUsername())) return new RestFailure("That user already exists. Please change username.");
