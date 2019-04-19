@@ -141,7 +141,7 @@ public class UserService implements UserDetailsService {
 
         Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(editedUser.getInitialUsername());
         if (user.isPresent()) {
-            boolean hadEmail = user.get().hasEmail();
+            boolean hadEmail = user.get().hasEmail(); // false
 
             user.get().importEdits(
                   editedUser.getUsername().toLowerCase(),
@@ -153,7 +153,7 @@ public class UserService implements UserDetailsService {
             if (!user.get().hasEmail() && !Strings.isNullOrEmpty(editedUser.getPassword()))
                 user.get().changePassword(passwordEncoder.encode(editedUser.getPassword()));
             // Otherwise if the user has an email and didn't have an email, send them a new password
-            else if (!hadEmail) {
+            else if (user.get().hasEmail() && !hadEmail) {
                 String pass = PasswordGenerator.newPass();
                 user.get().changePassword(passwordEncoder.encode(pass));
 
