@@ -1,6 +1,7 @@
 package edu.csumb.spring19.capstone.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.base.Strings;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
@@ -50,6 +51,8 @@ public class PLUser {
     public String getEmail() {
         return this.email;
     }
+
+    public Boolean hasEmail() { return !Strings.isNullOrEmpty(this.email); }
 
     public String getRealName() {
         return this.realName;

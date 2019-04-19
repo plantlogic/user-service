@@ -7,8 +7,9 @@ import java.util.List;
 public class UserInfoReceiveEdit extends UserInfoReceive {
     private String initialUsername;
 
-    public UserInfoReceiveEdit(String username, String realName, String email, List<String> permissions, String initialUsername) {
-        super(username, realName, email, permissions);
+    public UserInfoReceiveEdit(String username, String realName, String email, String password, List<String> permissions,
+                               String initialUsername) {
+        super(username, realName, email, password, permissions);
         this.initialUsername = initialUsername;
     }
 
