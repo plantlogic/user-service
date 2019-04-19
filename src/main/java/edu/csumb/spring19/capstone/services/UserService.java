@@ -114,6 +114,11 @@ public class UserService implements UserDetailsService {
     public RestDTO editUser(UserInfoReceiveEdit editedUser) {
         if (editedUser.anyEmptyVal()) return new RestFailure("All fields must be filled.");
         if (editedUser.hasBothPassAndEmail()) return new RestFailure("Users can only have either an email or a manually entered password.");
+        if (editedUser.getUsername().length() > 0 && editedUser.getUsername().length() < 4)
+            return new RestFailure("Usernames must be at least 4 characters long.");
+        if (!Strings.isNullOrEmpty(editedUser.getPassword()) && editedUser.getPassword().length() > 0 && editedUser.getPassword().length() < 4)
+            return new RestFailure("Passwords must be at least 4 characters long.");
+
         editedUser.unifyStringCase();
 
         if (editedUser.usernameChanged() && userRepository.existsByUsernameIgnoreCase(editedUser.getUsername())) {
@@ -182,6 +187,10 @@ public class UserService implements UserDetailsService {
         if (user.anyEmptyVal()) return new RestFailure("All fields must be filled.");
         if (user.hasBothPassAndEmail()) return new RestFailure("Users can only have either an email or a manually entered password.");
         if (user.hasNeitherPassOrEmail()) return new RestFailure("Users must have either an email or a manually entered password.");
+        if (user.getUsername().length() > 0 && user.getUsername().length() < 4)
+            return new RestFailure("Usernames must be at least 4 characters long.");
+        if (!Strings.isNullOrEmpty(user.getPassword()) && user.getPassword().length() > 0 && user.getPassword().length() < 4)
+            return new RestFailure("Passwords must be at least 4 characters long.");
         user.unifyStringCase();
 
         if (userRepository.existsByUsernameIgnoreCase(user.getUsername())) return new RestFailure("That user already exists. Please change username.");
