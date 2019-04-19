@@ -161,6 +161,7 @@ public class UserService implements UserDetailsService {
             else if (user.get().hasEmail() && !hadEmail) {
                 String pass = PasswordGenerator.newPass();
                 user.get().changePassword(passwordEncoder.encode(pass));
+                user.get().resetPassword();
 
                 try {
                     mailService.passwordReset(user.get().getEmail(), user.get().getRealName(), pass);
