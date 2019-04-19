@@ -112,6 +112,7 @@ public class UserService implements UserDetailsService {
      */
     public RestDTO editUser(UserInfoReceiveEdit editedUser) {
         if (editedUser.anyEmptyVal()) return new RestFailure("All fields must be filled.");
+        if (editedUser.passOrEmailOnly()) return new RestFailure("Users must only have either an email or a manually entered password.");
         editedUser.unifyStringCase();
 
         if (editedUser.usernameChanged() && userRepository.existsByUsernameIgnoreCase(editedUser.getUsername())) {
@@ -140,6 +141,8 @@ public class UserService implements UserDetailsService {
                   WordUtils.capitalizeFully(editedUser.getRealName(), ' ', '-'),
                   parsedPermissions
                   );
+            // If user doesn't have an email address, import their new password
+            if (!user.get().hasEmail()) user.get().changePassword(passwordEncoder.encode(editedUser.getPassword()));
             // Delete old user entry from DB if username has been changed
             if (editedUser.usernameChanged()) userRepository.deleteByUsernameIgnoreCase(editedUser.getInitialUsername());
             userRepository.save(user.get());
@@ -156,6 +159,7 @@ public class UserService implements UserDetailsService {
      */
     public RestDTO addUser(UserInfoReceive user) {
         if (user.anyEmptyVal()) return new RestFailure("All fields must be filled.");
+        if (user.passOrEmailOnly()) return new RestFailure("Users must only have either an email or a manually entered password.");
         user.unifyStringCase();
 
         if (userRepository.existsByUsernameIgnoreCase(user.getUsername())) return new RestFailure("That user already exists. Please change username.");
@@ -178,13 +182,18 @@ public class UserService implements UserDetailsService {
               parsePermissions(user.getPermissions()),
               true
         );
+
+        // If user doesn't have an email address, import manually entered password
+        if (!plUser.hasEmail()) plUser.changePassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(plUser);
 
-        try {
-            mailService.newAccountCreated(plUser.getEmail(), plUser.getRealName(), plUser.getUsername(), pass);
-        } catch (MessagingException e) {
-            userRepository.delete(plUser);
-            return new RestFailure("There was an error sending the password email. Please try again.");
+        if (plUser.hasEmail()) {
+            try {
+                mailService.newAccountCreated(plUser.getEmail(), plUser.getRealName(), plUser.getUsername(), pass);
+            } catch (MessagingException e) {
+                userRepository.delete(plUser);
+                return new RestFailure("There was an error sending the password email. Please try again.");
+            }
         }
         return new RestSuccess();
     }
@@ -196,6 +205,7 @@ public class UserService implements UserDetailsService {
     public RestDTO resetPassword(String username) {
         Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(username);
         if (user.isPresent()) {
+            if (!user.get().hasEmail()) return new RestFailure("User has a manually entered password.");
             String pass = PasswordGenerator.newPass();
             user.get().changePassword(passwordEncoder.encode(pass));
             user.get().resetPassword();

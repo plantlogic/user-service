@@ -50,6 +50,8 @@ public class AuthService {
     public RestDTO resetPassword(String username) {
         Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(username);
         if (user.isPresent()) {
+            // Ignore users without an email address
+            if (!user.get().hasEmail()) return new RestSuccess();
             String pass = PasswordGenerator.newPass();
             user.get().changePassword(passwordEncoder.encode(pass));
             user.get().resetPassword();

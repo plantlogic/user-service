@@ -29,6 +29,7 @@ public class SelfService {
 
     public RestDTO changePassword(String oldPassword, String newPassword) throws Exception {
         PLUser user = getCurrentUser();
+        if (!user.hasEmail()) return new RestFailure("Your password was set by an administrator and cannot be changed.");
         if (passwordEncoder.matches(oldPassword, user.getPassword())) {
             if (passwordEncoder.matches(newPassword, user.getPassword())) {
                 return new RestFailure("Your new password must be different from your current password.");
