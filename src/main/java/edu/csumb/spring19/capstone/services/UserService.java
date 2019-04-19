@@ -135,6 +135,8 @@ public class UserService implements UserDetailsService {
 
         Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(editedUser.getInitialUsername());
         if (user.isPresent()) {
+            boolean hadEmail = user.get().hasEmail();
+
             user.get().importEdits(
                   editedUser.getUsername().toLowerCase(),
                   editedUser.getEmail(),
@@ -143,6 +145,18 @@ public class UserService implements UserDetailsService {
                   );
             // If user doesn't have an email address, import their new password
             if (!user.get().hasEmail()) user.get().changePassword(passwordEncoder.encode(editedUser.getPassword()));
+            // Otherwise if the user has an email and didn't have an email, send them a new password
+            else if (!hadEmail) {
+                String pass = PasswordGenerator.newPass();
+                user.get().changePassword(passwordEncoder.encode(pass));
+
+                try {
+                    mailService.passwordReset(user.get().getEmail(), user.get().getRealName(), pass);
+                } catch (MessagingException e) {
+                    return new RestFailure("There was an error sending the password in an email. Please try again.");
+                }
+            }
+            
             // Delete old user entry from DB if username has been changed
             if (editedUser.usernameChanged()) userRepository.deleteByUsernameIgnoreCase(editedUser.getInitialUsername());
             userRepository.save(user.get());
