@@ -1,6 +1,5 @@
 package edu.csumb.spring19.capstone.security;
 
-import edu.csumb.spring19.capstone.dto.auth.TokenDTO;
 import edu.csumb.spring19.capstone.dto.user.UserInfoSend;
 import edu.csumb.spring19.capstone.models.PLUser;
 import edu.csumb.spring19.capstone.services.UserService;
