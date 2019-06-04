@@ -30,7 +30,9 @@ public class Swagger {
                   .paths(Predicates.not(PathSelectors.regex("/error.*")))
                   .build()
                   .securitySchemes(securitySchemes());
-        } else return null;
+        } else {
+            return new Docket(DocumentationType.SWAGGER_2).select().build();
+        }
     }
 
     private static ArrayList<? extends SecurityScheme> securitySchemes() {
