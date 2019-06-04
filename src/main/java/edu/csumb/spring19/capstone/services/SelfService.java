@@ -4,7 +4,6 @@ import edu.csumb.spring19.capstone.dto.RestDTO;
 import edu.csumb.spring19.capstone.dto.RestData;
 import edu.csumb.spring19.capstone.dto.RestFailure;
 import edu.csumb.spring19.capstone.dto.RestSuccess;
-import edu.csumb.spring19.capstone.dto.auth.AuthDTO;
 import edu.csumb.spring19.capstone.models.PLUser;
 import edu.csumb.spring19.capstone.repositories.UserRepository;
 import edu.csumb.spring19.capstone.security.JwtTokenProvider;

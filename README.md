@@ -20,6 +20,7 @@ appropriately.
 * **SMTP_TLS:** `true`/`false`
 (Sets whether StartTLS is required for connection. Default is `true`.)
 ### App Configuration
+* **ENABLE_SWAGGER:** Default is `false`. Allows all connections to Swagger and Swagger UI.
 * **SERVER_SERVLET_CONTEXT_PATH**: The path that the service listens to. If served from `example.com/api/user/`, this should be 
 `/api/user` (which is the default).
 * **APP_NAME:** Default is `PlantLogic`.

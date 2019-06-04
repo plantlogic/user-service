@@ -2,6 +2,7 @@ package edu.csumb.spring19.capstone.security;
 
 import edu.csumb.spring19.capstone.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public UserService userService;
+
+    @Value("${ENABLE_SWAGGER:false}")
+    private Boolean docsEnabled;
+
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -54,11 +60,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     // Allow access to Swagger without auth
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/v2/api-docs")
-            .antMatchers("/swagger-resources/**")
-            .antMatchers("/swagger-ui.html")
-            .antMatchers("/configuration/**")
-            .antMatchers("/webjars/**")
-            .antMatchers("/public");
+        if (docsEnabled) {
+            web.ignoring().antMatchers("/v2/api-docs")
+                  .antMatchers("/swagger-resources/**")
+                  .antMatchers("/swagger-ui.html")
+                  .antMatchers("/configuration/**")
+                  .antMatchers("/webjars/**")
+                  .antMatchers("/public");
+        }
     }
 }
