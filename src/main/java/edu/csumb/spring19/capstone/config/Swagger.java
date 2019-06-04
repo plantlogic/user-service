@@ -1,6 +1,7 @@
 package edu.csumb.spring19.capstone.config;
 
 import com.google.common.base.Predicates;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.PathSelectors;
@@ -17,14 +18,19 @@ import java.util.Arrays;
 @Configuration
 @EnableSwagger2
 public class Swagger {
+    @Value("${ENABLE_SWAGGER:false}")
+    private Boolean docsEnabled;
+
     @Bean
     public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
-              .select()
-              .apis(RequestHandlerSelectors.basePackage("edu.csumb.spring19.capstone"))
-              .paths(Predicates.not(PathSelectors.regex("/error.*")))
-              .build()
-              .securitySchemes(securitySchemes());
+        if (docsEnabled) {
+            return new Docket(DocumentationType.SWAGGER_2)
+                  .select()
+                  .apis(RequestHandlerSelectors.basePackage("edu.csumb.spring19.capstone"))
+                  .paths(Predicates.not(PathSelectors.regex("/error.*")))
+                  .build()
+                  .securitySchemes(securitySchemes());
+        } else return null;
     }
 
     private static ArrayList<? extends SecurityScheme> securitySchemes() {
