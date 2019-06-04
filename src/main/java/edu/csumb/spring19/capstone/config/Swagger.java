@@ -31,7 +31,11 @@ public class Swagger {
                   .build()
                   .securitySchemes(securitySchemes());
         } else {
-            return new Docket(DocumentationType.SWAGGER_2).select().build();
+            return new Docket(DocumentationType.SWAGGER_2)
+                  .select()
+                  .apis(RequestHandlerSelectors.none())
+                  .paths(PathSelectors.none())
+                  .build();
         }
     }
 
