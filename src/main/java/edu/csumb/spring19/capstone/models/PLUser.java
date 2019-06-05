@@ -22,13 +22,14 @@ public class PLUser {
     private List<String> ranchAccess;
     private List<GrantedAuthority> permissions;
 
-    public PLUser(String username, String password, String realName, String email, List<GrantedAuthority> permissions,
-                  Boolean passwordReset){
+    public PLUser(String username, String password, String realName, String email, List<String> ranchAccess,
+                  List<GrantedAuthority> permissions, Boolean passwordReset){
         this.username = username;
         this.password = password;
         this.realName = realName;
         this.email = email;
         this.passwordUpdated = Calendar.getInstance();
+        this.ranchAccess = ranchAccess;
         this.permissions = permissions;
         this.passwordReset = passwordReset;
     }
@@ -93,10 +94,11 @@ public class PLUser {
         this.passwordUpdated = Calendar.getInstance();
     }
 
-    public void importEdits(String username, String email, String realName, List<GrantedAuthority> permissions) {
+    public void importEdits(String username, String email, String realName, List<String> ranchAccess, List<GrantedAuthority> permissions) {
         this.username = username;
         this.email = email;
         this.realName = realName;
+        this.ranchAccess = ranchAccess;
         this.permissions = permissions;
     }
 }

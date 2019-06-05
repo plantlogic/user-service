@@ -152,6 +152,7 @@ public class UserService implements UserDetailsService {
                   editedUser.getUsername().toLowerCase(),
                   editedUser.getEmail(),
                   WordUtils.capitalizeFully(editedUser.getRealName(), ' ', '-'),
+                  editedUser.getRanchAccess(),
                   parsedPermissions
                   );
             // If user doesn't have an email address and password is provided, import the new password
@@ -211,6 +212,7 @@ public class UserService implements UserDetailsService {
               passwordEncoder.encode(pass),
               WordUtils.capitalizeFully(user.getRealName(), ' ', '-'),
               user.getEmail(),
+              user.getRanchAccess(),
               parsePermissions(user.getPermissions()),
               true
         );
@@ -275,6 +277,7 @@ public class UserService implements UserDetailsService {
                         passwordEncoder.encode("admin"),
                         "Default Admin",
                         "hello@plantlogic.org",
+                        new ArrayList<>(),
                         new ArrayList<GrantedAuthority>(Arrays.asList(
                               PLRole.DATA_VIEW, PLRole.DATA_EDIT, PLRole.DATA_ENTRY,
                               PLRole.USER_MANAGEMENT, PLRole.APP_ADMIN

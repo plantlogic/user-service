@@ -16,6 +16,7 @@ public class UserInfoReceive extends UserDTO {
         this.realName = realName;
         this.email = email;
         this.password = password;
+        this.ranchAccess = ranchAccess;
         this.permissions = permissions;
     }
 
