@@ -8,9 +8,10 @@ public class UserInfoReceive extends UserDTO {
     protected String realName;
     protected String email;
     protected String password;
+    protected List<String> ranchAccess;
     protected List<String> permissions;
 
-    public UserInfoReceive(String username, String realName, String email, String password, List<String> permissions) {
+    public UserInfoReceive(String username, String realName, String email, String password, List<String> ranchAccess, List<String> permissions) {
         super.username = username;
         this.realName = realName;
         this.email = email;
@@ -32,6 +33,10 @@ public class UserInfoReceive extends UserDTO {
 
     public String getPassword() {
         return password;
+    }
+
+    public List<String> getRanchAccess() {
+        return ranchAccess;
     }
 
     public List<String> getPermissions() {

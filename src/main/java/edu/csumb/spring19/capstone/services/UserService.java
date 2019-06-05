@@ -83,9 +83,9 @@ public class UserService implements UserDetailsService {
                   user.get().getRealName(),
                   user.get().getEmail(),
                   user.get().getPasswordUpdated(),
+                  user.get().getRanchAccess(),
                   user.get().getNonNullPermissions(),
-                  user.get().isPasswordReset()
-            ));
+                  user.get().isPasswordReset()));
         } else {
             return new RestFailure("No user found with that username.");
         }

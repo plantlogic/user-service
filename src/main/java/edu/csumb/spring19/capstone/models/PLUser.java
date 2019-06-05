@@ -19,6 +19,7 @@ public class PLUser {
     private String realName;
     private Calendar passwordUpdated;
     private Boolean passwordReset;
+    private List<String> ranchAccess;
     private List<GrantedAuthority> permissions;
 
     public PLUser(String username, String password, String realName, String email, List<GrantedAuthority> permissions,
@@ -53,6 +54,14 @@ public class PLUser {
 
     public Calendar getPasswordUpdated() {
         return this.passwordUpdated;
+    }
+
+    public List<String> getRanchAccess() {
+        return ranchAccess;
+    }
+
+    public void setRanchAccess(List<String> ranchAccess) {
+        this.ranchAccess = ranchAccess;
     }
 
     public List<GrantedAuthority> getPermissions() {
