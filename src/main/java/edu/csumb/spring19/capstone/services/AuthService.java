@@ -34,13 +34,25 @@ public class AuthService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private LoginProtectionService lps;
+
     public RestDTO signIn(String username, String password) {
+        if (lps.isBlocked()) return new RestFailure("Your IP address has been blocked because the maximum number of incorrect login" +
+              " attempts has been reached. Please try again in an hour, or reboot the server.");
+
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
             Optional<PLUser> user = userRepository.findByUsernameIgnoreCase(username);
-            if (!user.isPresent()) return new RestFailure("Username or password is incorrect.");
+            if (!user.isPresent()) {
+                lps.loginFailed();
+                return new RestFailure("Username or password is incorrect.");
+            }
+
+            lps.loginSucceeded();
             return new RestData<>(jwtTokenProvider.createToken(user.get()));
         } catch (Exception e) {
+            lps.loginFailed();
             return new RestFailure("Username or password is incorrect.");
         }
     }
