@@ -280,7 +280,7 @@ public class UserService implements UserDetailsService {
                         new ArrayList<>(),
                         new ArrayList<GrantedAuthority>(Arrays.asList(
                               PLRole.DATA_VIEW, PLRole.DATA_EDIT, PLRole.DATA_ENTRY,
-                              PLRole.USER_MANAGEMENT, PLRole.APP_ADMIN
+                              PLRole.USER_MANAGEMENT, PLRole.APP_ADMIN, PLRole.CONTRACTOR_VIEW, PLRole.CONTRACTOR_EDIT
                         )),
                         false
                   )
