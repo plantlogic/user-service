@@ -131,10 +131,11 @@ public class UserService implements UserDetailsService {
                   "cannot remove their own 'User Management' permissions.");
         }
 
-        if (editedUser.getInitialUsername().equalsIgnoreCase(getCurrentUsername()) && Strings.isNullOrEmpty(editedUser.getEmail())) {
-            return new RestFailure("Admins with 'User Management' permission " +
-                  "cannot remove their own email address.");
-        }
+        // Is this needed? -> Error when non-email user tries to use user management privilege
+        // if (editedUser.getInitialUsername().equalsIgnoreCase(getCurrentUsername()) && Strings.isNullOrEmpty(editedUser.getEmail())) {
+        //     return new RestFailure("Admins with 'User Management' permission " +
+        //           "cannot remove their own email address.");
+        // }
 
         if (!usernameRegex.matcher(editedUser.getUsername()).matches()) {
             return new RestFailure(usernameRegexError);
