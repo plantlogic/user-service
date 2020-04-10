@@ -13,7 +13,7 @@ import edu.csumb.spring19.capstone.models.PLRole;
 import edu.csumb.spring19.capstone.models.PLUser;
 import edu.csumb.spring19.capstone.repositories.UserRepository;
 import org.apache.commons.text.WordUtils;
-import org.apache.commons.text.similarity.EditDistance;
+// import org.apache.commons.text.similarity.EditDistance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
