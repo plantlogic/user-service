@@ -8,8 +8,8 @@ public class UserInfoReceiveEdit extends UserInfoReceive {
     private String initialUsername;
 
     public UserInfoReceiveEdit(String username, String realName, String email, String password, List<String> ranchAccess,
-                               List<String> permissions, String initialUsername) {
-        super(username, realName, email, password, ranchAccess, permissions);
+                               List<String> permissions, String initialUsername, String shipperID) {
+        super(username, realName, email, password, ranchAccess, permissions, shipperID);
         this.initialUsername = initialUsername;
     }
 
