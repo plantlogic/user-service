@@ -10,14 +10,17 @@ public class UserInfoReceive extends UserDTO {
     protected String password;
     protected List<String> ranchAccess;
     protected List<String> permissions;
+    protected String shipperID;
 
-    public UserInfoReceive(String username, String realName, String email, String password, List<String> ranchAccess, List<String> permissions) {
+    public UserInfoReceive(String username, String realName, String email, String password, List<String> ranchAccess, List<String> permissions, String shipperID) {
         super.username = username;
         this.realName = realName;
         this.email = email;
         this.password = password;
         this.ranchAccess = ranchAccess;
         this.permissions = permissions;
+        this.shipperID = shipperID;
+        System.out.println("UserInfoReceive Constructor Received User With Shipper ID: ["+shipperID+"] ");
     }
 
     public String getUsername() {
@@ -42,6 +45,14 @@ public class UserInfoReceive extends UserDTO {
 
     public List<String> getPermissions() {
         return permissions;
+    }
+
+    public String getShipperID() {
+        return (this.hasShipperID()) ? shipperID : "";
+    }
+
+    public Boolean hasShipperID() {
+        return !Strings.isNullOrEmpty(this.shipperID);
     }
 
     public Boolean anyEmptyVal() {

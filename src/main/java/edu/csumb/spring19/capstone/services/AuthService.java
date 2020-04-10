@@ -37,7 +37,7 @@ public class AuthService {
     @Autowired
     private LoginProtectionService lps;
 
-    public RestDTO signIn(String username, String password) {
+    public RestDTO signIn(String username, String password) {         
         if (lps.isBlocked()) return new RestFailure("Your IP address has been blocked because the maximum number of incorrect login" +
               " attempts has been reached. Please try again in an hour, or reboot the server.");
 
