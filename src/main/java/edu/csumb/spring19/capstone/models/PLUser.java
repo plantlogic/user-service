@@ -25,7 +25,6 @@ public class PLUser {
 
     public PLUser(String username, String password, String realName, String email, List<String> ranchAccess,
                   List<GrantedAuthority> permissions, Boolean passwordReset, String shipperID){
-        System.out.println("PLUser Constructor Received Shipper ID: ["+shipperID+"] ");
         this.username = username;
         this.password = password;
         this.realName = realName;
