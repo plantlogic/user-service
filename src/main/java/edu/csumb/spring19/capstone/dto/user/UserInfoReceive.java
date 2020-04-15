@@ -20,7 +20,6 @@ public class UserInfoReceive extends UserDTO {
         this.ranchAccess = ranchAccess;
         this.permissions = permissions;
         this.shipperID = shipperID;
-        System.out.println("UserInfoReceive Constructor Received User With Shipper ID: ["+shipperID+"] ");
     }
 
     public String getUsername() {

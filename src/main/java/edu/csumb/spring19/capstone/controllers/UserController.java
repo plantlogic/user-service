@@ -8,9 +8,6 @@ import edu.csumb.spring19.capstone.dto.user.UserInfoReceiveEdit;
 import edu.csumb.spring19.capstone.services.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
-
-// import com.mongodb.util.JSON;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +42,6 @@ public class UserController {
           authorizations = {@Authorization(value = "Bearer")})
     @PostMapping("/addUser")
     public RestDTO addUser(@RequestBody UserInfoReceive user) {
-        System.out.println("Controller Received UserInfoReceive With Shipper ID: ["+user.getShipperID()+"] ");
         return userService.addUser(user);
     }
 

@@ -13,7 +13,6 @@ import edu.csumb.spring19.capstone.models.PLRole;
 import edu.csumb.spring19.capstone.models.PLUser;
 import edu.csumb.spring19.capstone.repositories.UserRepository;
 import org.apache.commons.text.WordUtils;
-// import org.apache.commons.text.similarity.EditDistance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -190,7 +189,6 @@ public class UserService implements UserDetailsService {
      * @return RestDTO with success or failure and associated message.
      */
     public RestDTO addUser(UserInfoReceive user) {
-        System.out.println("UserService received UserInfoReceive With Shipper ID: ["+user.getShipperID()+"] ");
         if (user.anyEmptyVal()) return new RestFailure("All fields must be filled.");
         if (user.hasBothPassAndEmail()) return new RestFailure("Users can only have either an email or a manually entered password.");
         if (user.hasNeitherPassOrEmail()) return new RestFailure("Users must have either an email or a manually entered password.");
@@ -222,8 +220,6 @@ public class UserService implements UserDetailsService {
               true,
               user.getShipperID()
         );
-
-        System.out.println("UserService Created PLUser With Shipper ID: ["+plUser.getShipperID()+"] ");
 
         // If user doesn't have an email address, import manually entered password
         if (!plUser.hasEmail()) plUser.changePassword(passwordEncoder.encode(user.getPassword()));
