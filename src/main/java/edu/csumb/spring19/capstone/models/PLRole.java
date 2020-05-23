@@ -9,6 +9,7 @@ public enum PLRole implements GrantedAuthority {
     DATA_EDIT,
     DATA_ENTRY,
     DATA_VIEW,
+    IRRIGATOR,
     SHIPPER,
     USER_MANAGEMENT;
 
