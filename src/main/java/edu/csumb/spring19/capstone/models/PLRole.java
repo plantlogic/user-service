@@ -11,6 +11,8 @@ public enum PLRole implements GrantedAuthority {
     DATA_VIEW,
     IRRIGATOR,
     SHIPPER,
+    TH_EDIT,
+    TH_VIEW,
     USER_MANAGEMENT;
 
     @Override
