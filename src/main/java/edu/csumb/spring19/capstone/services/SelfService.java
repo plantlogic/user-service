@@ -22,8 +22,8 @@ public class SelfService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
-    @Autowired
-    private UserService userService;
+    // @Autowired
+    // private UserService userService;
 
 
     public RestDTO changePassword(String oldPassword, String newPassword) throws Exception {

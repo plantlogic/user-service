@@ -36,7 +36,7 @@ public class ErrorPage implements ErrorController {
         else return new RestFailure("Unknown error.");
     }
 
-    @Override
+    @Deprecated
     public String getErrorPath() {
         return PATH;
     }

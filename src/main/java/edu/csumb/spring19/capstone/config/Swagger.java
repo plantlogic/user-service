@@ -1,46 +1,48 @@
 package edu.csumb.spring19.capstone.config;
 
-import com.google.common.base.Predicates;
+import org.springdoc.core.GroupedOpenApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiKey;
-import springfox.documentation.service.SecurityScheme;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
-
-import java.util.ArrayList;
-import java.util.Arrays;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.springdoc.core.customizers.OpenApiCustomiser;
 
 @Configuration
-@EnableSwagger2
+// @EnableSwagger2
 public class Swagger {
     @Value("${ENABLE_SWAGGER:false}")
     private Boolean docsEnabled;
 
     @Bean
-    public Docket api() {
+    public GroupedOpenApi api() {
         if (docsEnabled) {
-            return new Docket(DocumentationType.SWAGGER_2)
-                  .select()
-                  .apis(RequestHandlerSelectors.basePackage("edu.csumb.spring19.capstone"))
-                  .paths(Predicates.not(PathSelectors.regex("/error.*")))
-                  .build()
-                  .securitySchemes(securitySchemes());
+            return GroupedOpenApi.builder()
+                    .group("3.Public")
+                    .pathsToExclude("/error.*")
+                    .addOpenApiCustomiser(userApiCustomiser())
+                    .build();
+
         } else {
-            return new Docket(DocumentationType.SWAGGER_2)
-                  .select()
-                  .apis(RequestHandlerSelectors.none())
-                  .paths(PathSelectors.none())
-                  .build();
+            return GroupedOpenApi.builder()
+                    .group("4.?")
+                    .pathsToExclude("*")
+                    .build();
         }
     }
 
-    private static ArrayList<? extends SecurityScheme> securitySchemes() {
-        return new ArrayList<>(Arrays.asList(new ApiKey("Bearer", "Authorization", "header")));
+    @Bean
+    public OpenApiCustomiser userApiCustomiser() {
+        return openApi -> openApi.addSecurityItem(new SecurityRequirement().addList("Authorization"))
+                .components(new Components()
+                        .addSecuritySchemes("Authorization", new SecurityScheme()
+                                .in(SecurityScheme.In.HEADER)
+                                .type(SecurityScheme.Type.APIKEY)
+                                .scheme("bearer")
+                                .bearerFormat("JWT"))
+                )
+                .info(new Info().title("Public REST API"));
     }
 }
-

@@ -4,8 +4,8 @@ import edu.csumb.spring19.capstone.dto.RestDTO;
 import edu.csumb.spring19.capstone.dto.RestSuccess;
 import edu.csumb.spring19.capstone.dto.user.PasswordChange;
 import edu.csumb.spring19.capstone.services.SelfService;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,8 +16,8 @@ public class SelfController {
     @Autowired
     private SelfService selfService;
 
-    @ApiOperation(value = "Change the password of the current user.",
-          authorizations = {@Authorization(value = "Bearer")})
+    @Operation(summary = "Change the password of the current user.",
+          security = {@SecurityRequirement(name = "Bearer")})
     @PostMapping("/changePassword")
     public RestDTO changePassword(@RequestBody PasswordChange request) throws Exception {
         return selfService.changePassword(
@@ -26,15 +26,15 @@ public class SelfController {
         );
     }
 
-    @ApiOperation(value = "Get a new token.",
-          authorizations = {@Authorization(value = "Bearer")})
+    @Operation(summary = "Get a new token.",
+          security = {@SecurityRequirement(name = "Bearer")})
     @GetMapping("/renewToken")
     public RestDTO renewToken() {
         return selfService.renewToken();
     }
 
-    @ApiOperation(value = "Will only return 'success' if token is valid.",
-          authorizations = {@Authorization(value = "Bearer")})
+    @Operation(summary = "Will only return 'success' if token is valid.",
+          security = {@SecurityRequirement(name = "Bearer")})
     @GetMapping("/tokenValid")
     public RestDTO tokenValid() {
         return new RestSuccess();

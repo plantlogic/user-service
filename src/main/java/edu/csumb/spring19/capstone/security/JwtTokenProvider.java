@@ -23,7 +23,7 @@ public class JwtTokenProvider {
     private long validityInMilliseconds = 1 * 60 * 60 * 1000; // 1h
 
     @Autowired
-    public UserService userRepository;
+    public UserService userService;
 
     private Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
@@ -43,12 +43,12 @@ public class JwtTokenProvider {
     }
 
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userRepository.loadUserByUsername(getUsername(token));
+        UserDetails userDetails = userService.loadUserByUsername(getUsername(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
     public String getUsername(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().getSubject();
     }
 
     public String resolveToken(HttpServletRequest req) {
@@ -61,7 +61,7 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) throws Exception {
         try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             throw new Exception("Expired or invalid JWT token.");
